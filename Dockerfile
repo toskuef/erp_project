@@ -24,4 +24,9 @@ COPY ../ /app
 WORKDIR /app
 
 # Выполнить запуск сервера разработки при старте контейнера.
-CMD ["gunicorn", "erp_core.wsgi:application", "--bind", "0:8000" ]
+CMD ["gunicorn", "core.wsgi:application", "--bind", "0:8000"]
+#CMD ["uvicorn", "core.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
+#CMD ["gunicorn", "api_yamdb.wsgi:application", "uvicorn.workers.UvicornWorker"]
+#CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "core.asgi:application"]
+#daphne -b 0.0.0.0 -p 8000 core.asgi:application
+

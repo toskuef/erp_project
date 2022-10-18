@@ -1,0 +1,54 @@
+<p class="text-sm">
+  <span class="badge badge-sm badge-success">
+    {% if customer.is_show %}
+    Действующий
+    {% else %}
+    Неразобран
+    {% endif %}
+  </span>
+</p>
+<hr class="horizontal dark my-2">
+<ul class="list-group">
+  <li class="list-group-item border-0 ps-0 text-sm"><strong
+          class="text-dark">Телефон:</strong>
+    &nbsp; {{ customer.phone }}</li>
+  <li class="list-group-item border-0 ps-0 text-sm"><strong
+          class="text-dark">Источник:</strong>
+    &nbsp; {{ customer.source.source }}</li>
+  <li class="list-group-item border-0 ps-0 text-sm"><strong
+          class="text-dark">Дата создания:</strong>
+    &nbsp; {{ customer.date }}</li>
+  <li class="list-group-item border-0 ps-0 pb-0">
+    <strong class="text-dark text-sm">Социальные сети:</strong>
+    &nbsp;{% if vk_id != 0 %}
+    <a class="btn mb-0 ps-1 pe-2 py-0"
+       href="https://vk.com/id{{ vk_id }}" target="_blank">
+      <i class="fab fa-vk fa-lg"></i>
+    </a>
+    {% endif %}
+  </li>
+  <br>
+<h6 class="mb-0">Адрес:</h6>
+
+{% for address in address_list %}
+  <li class="list-group-item border-0 ps-0 text-sm">
+    {{ address.area }} обл.,
+    {{ address.region }} р-н,
+    г. {{ address.town }},
+    ул. {{ address.street }}, д. {{ address.num_house }},
+    {% if address.num_housing %}
+      корп. {{ address.num_housing }},
+    {% endif %}
+    {% if address.num_level %}
+      под. {{ address.num_level }},
+    {% endif %}
+    {% if address.num_door %}
+      эт. {{ address.num_door }},
+    {% endif %}
+    {% if address.num_flat %}
+      кв. {{ address.num_flat }},
+    {% endif %}
+  </li>
+
+{% endfor %}
+</ul>

@@ -1,0 +1,42 @@
+{% with request.resolver_match.view_name as view_name %}
+  <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+    {% if view_name == 'crm:crm_customers' %}
+      <li class="breadcrumb-item text-sm">
+        <a class="opacity-5 text-dark" href="javascript:;"></a>
+      </li>
+      <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
+        Клиенты
+      </li>
+      {% elif view_name == 'crm:crm_customer_detail' %}
+      <li class="breadcrumb-item text-sm">
+        <a class="opacity-5 text-dark" href="{% url 'crm:crm_customers' %}">Клиенты</a>
+      </li>
+      <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
+        {{ customer }}
+      </li>
+      {% elif view_name == 'crm:crm_order_detail' %}
+      <li class="breadcrumb-item text-sm">
+        <a class="opacity-5 text-dark" href="{% url 'crm:crm_customers' %}">Клиенты</a>
+      </li>
+      <li class="breadcrumb-item text-sm">
+        <a class="opacity-5 text-dark" href="{% url 'crm:crm_customer_detail' order.customer.pk %}">{{ order.customer }}</a>
+      </li>
+      <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
+        {{ order }}
+      </li>
+      {% elif view_name == 'crm:crm_product_detail' %}
+      <li class="breadcrumb-item text-sm">
+        <a class="opacity-5 text-dark" href="{% url 'crm:crm_customers' %}">Клиенты</a>
+      </li>
+      <li class="breadcrumb-item text-sm">
+        <a class="opacity-5 text-dark" href="{% url 'crm:crm_customer_detail' product.order.customer.pk %}">{{ product.order.customer }}</a>
+      </li>
+      <li class="breadcrumb-item text-sm">
+        <a class="opacity-5 text-dark" href="{% url 'crm:crm_order_detail' product.order.pk %}">{{ product.order }}</a>
+      </li>
+      <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
+        {{ product }}
+      </li>
+    {% endif %}
+  </ol>
+{% endwith %}

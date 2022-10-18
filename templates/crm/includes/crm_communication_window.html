@@ -1,0 +1,204 @@
+<!-- Import jquery cdn -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity=
+                "sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous">
+</script>
+
+{% for date in dates_context %}
+  <div class="row mt-2 sticky blur shadow-blur border-radius-xl">
+    <div class="col-md-12 text-center">
+      <span class="badge text-dark">{{ date }}</span>
+    </div>
+  </div>
+  {% for content in context %}
+    {% if date == content.date.date %}
+      {% if content.get_my_model_name == 'Message' %}
+        {% if content.out == 0 %}
+          <div class="row justify-content-start mb-2 mt-1">
+            <div class="col-auto">
+              <div class="card ">
+                <div class="card-body py-2 px-3">
+                  <p class="mb-1 text-xs">
+                    {{ content.text }}
+                  </p>
+                  <div class="d-flex align-items-center text-sm opacity-6">
+                    <i class="ni ni-check-bold text-sm me-1"></i>
+                    <small>{{ content.date }}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> <!-- Сообщение входящее -->
+        {% else %}
+          <div class="row justify-content-end text-right mb-2 mt-1">
+            <div class="col-auto">
+              <div class="card bg-gray-200">
+                <div class="card-body py-2 px-3">
+                  <p class="mb-1 text-xs">
+                    {{ content.text }}
+                  </p>
+                  <div class="d-flex align-items-center justify-content-end text-sm opacity-6">
+                    <i class="ni ni-check-bold text-sm me-1"></i>
+                    <small>{{ content.date }}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> <!-- Сообщение исходящее -->
+        {% endif %}
+      {% elif content.get_my_model_name == 'task' %}
+        <div class="d-flex mb-2 mt-1 card flex-row w-100 bg-dark ">
+          <div>
+            <div class="icon icon-shape bg-danger-soft shadow text-center border-radius-md shadow-none">
+              <i class="ni ni-money-coins text-lg text-danger text-gradient opacity-10"
+                 aria-hidden="true"></i>
+            </div>
+          </div>
+          <div class="ms-3 ">
+            <div class="numbers">
+              <h6 class="mb-1 text-white text-sm">{{ content.task }}</h6>
+              <span class="text-white-50 text-sm">{{ content.date }}</span>
+            </div>
+
+          </div>
+          {% if content.is_done %}
+            <i class="ni ni-check-bold text-success text-gradient align-self-center ms-auto p-2 bd-highlight"></i>
+            {% elif not content.is_show %}
+            {% if content.to == request.user %}
+            <div class="form-check align-self-center ms-auto p-2 bd-highlight">
+              <button hx-get="{% url 'crm:start_task' content.pk object.pk object.get_my_model_name %}"
+                      hx-target="#parentDiv"
+                      class="btn btn-light text-xxs m-0 p-2"
+                      onclick="soft.showSwal('notification', {{ object.pk }}, {{ content.pk }}, '{{ object.get_my_model_name }}')"
+                      >В работу
+              </button>
+            </div>
+              {% else %}
+              <i class="fa fa-close text-warning text-gradient align-self-center ms-auto p-2 bd-highlight"></i>
+              {% endif %}
+          {% else %}
+            {% if content.to == request.user %}
+            <div class="form-check align-self-center ms-auto p-2 bd-highlight">
+              <button class="btn btn-danger text-xxs m-0 p-2"
+                      onclick="soft.showSwal('warning-message-and-cancel', {{ object.pk }}, {{ content.pk }}, '{{ object.get_my_model_name }}')">
+                Завершить
+              </button>
+            </div>
+            {% else %}
+              <i class="fa fa-close text-success text-gradient align-self-center ms-auto p-2 bd-highlight"></i>
+              {% endif %}
+          {% endif %}
+
+        </div> <!-- Задача -->
+      {% elif content.get_my_model_name == 'comment' %}
+        {% if request.user == content.staff %}
+          <div class="row justify-content-end text-right pb-2 pt-1 {% if content.is_show == False and content.to == request.user %} bg-gray-300 {% endif %}">
+            <div class="col-auto">
+              <div class="card bg-gradient-faded-warning-vertical">
+                <div class="card-body py-2 px-3">
+                  <p class="mb-1 text-sm">
+                    {{ content.text }}
+                  </p>
+                  <div class="d-flex align-items-center justify-content-end text-sm opacity-6">
+                    <i class="ni ni-check-bold text-sm me-1"></i>
+                    <small>{{ content.staff }}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> <!-- Комментарий мой -->
+        {% endif %}
+        {% if request.user != content.staff %}
+          <div class="row justify-content-start pb-2 pt-1 {% if content.is_show == False and content.to == request.user %} bg-gray-300 {% endif %}">
+            <div class="col-auto">
+              <div class="card bg-gradient-faded-dark">
+                <div class="card-body py-2 px-3">
+                  <p class="mb-1 text-sm text-white">
+                    {{ content.text }}
+                  </p>
+                  <div class="d-flex align-items-center text-sm opacity-6">
+                    <i class="ni ni-check-bold text-sm text-white me-1"></i>
+                    <small class="text-white">{{ content.staff }}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> <!-- Комментарий не мой -->
+        {% endif %}
+      {% elif content.get_my_model_name == 'customer' %}
+        <div class="d-flex card flex-row mb-2 mt-1 bg-gradient-success">
+          <div class="flex-grow-1 ms-3">
+            <h6 class="h5 mt-0">Создан клиент</h6>
+            <p class="text-sm">{{ content.date }}</p>
+          </div>
+        </div> <!-- Создан клиент -->
+      {% elif content.get_my_model_name == 'order' %}
+        <div class="d-flex card flex-row mb-2 mt-1 bg-warning">
+          <div class="flex-grow-1 ms-3">
+            <h6 class="h5 mt-0">Новый заказ</h6>
+            <p class="text-sm">{{ content.title }}</p>
+          </div>
+        </div> <!-- Создан заказ -->
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endfor %}
+
+<script>
+    var objDiv = document.getElementById("parentDiv");
+    objDiv.scrollTop = objDiv.scrollHeight;
+    $("#submit-comm").click(function () {
+        setTimeout(() => {
+            document.getElementById("form-comm").reset();
+        }, 100);
+    })
+</script>
+
+<script type="text/javascript">
+    let url = `ws://0.0.0.0:8000/ws/socket-server/`
+
+    const chatSocket = new WebSocket(url)
+
+    chatSocket.onmessage = function (e) {
+        let data = JSON.parse(e.data)
+        console.log('Data:', data)
+
+        if (data.type === 'chat') {
+            let messages = document.getElementById('parentDiv')
+
+            messages.insertAdjacentHTML('beforeend', `
+<div class="row justify-content-start mb-2 mt-1">
+            <div class="col-auto">
+              <div class="card ">
+                <div class="card-body py-2 px-3">
+                  <p class="mb-1 text-xs">
+                    ${data.message} ${data.text}
+                  </p>
+                  <div class="d-flex align-items-center text-sm opacity-6">
+                    <i class="ni ni-check-bold text-sm me-1"></i>
+                    <small>${data.date}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+`)
+            var objDiv = document.getElementById("parentDiv");
+    objDiv.scrollTop = objDiv.scrollHeight;
+        }
+    }
+
+    let form = document.getElementById('form')
+    form.addEventListener('submit', (e) => {
+        e.preventDefault()
+        let message = e.target.message.value
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }))
+        form.reset()
+    })
+
+</script>
+
+

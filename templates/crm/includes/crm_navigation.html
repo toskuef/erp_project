@@ -1,0 +1,117 @@
+{#{% load user_filters %}#}
+{% load static %}
+{% with request.resolver_match.view_name as view_name %}
+  <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl"
+       id="navbarBlur" navbar-scroll="true">
+    <div class="container-fluid py-1 px-3">
+      <nav aria-label="breadcrumb">
+        {% include 'crm/includes/breadcrumbs.html' %}
+      </nav>
+      <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4"
+           id="navbar">
+        <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+{#          <form action="{% url 'crm:search' %}">#}
+{#          <div class="input-group">#}
+{##}
+{#          <span class="input-group-text text-body"><i class="fas fa-search"#}
+{#                                                      aria-hidden="true"></i></span>#}
+{##}
+{#              <input type="text" class="form-control" name="search"#}
+{#                     placeholder="Поиск в базе">#}
+{##}
+{#          </div>#}
+{#          </form>#}
+        </div>
+        <ul class="navbar-nav  justify-content-end">
+
+          <li class="nav-item d-flex align-items-center">
+{#            {% if request.user.is_authenticated %}#}
+{#              <a href="{% url 'users:logout' %}"#}
+{#                 class="nav-link text-body font-weight-bold px-0">#}
+{#                <i class="fa fa-user me-sm-1"></i>#}
+{#                <span class="d-sm-inline d-none">Выйти</span>#}
+{#              </a>#}
+{#            {% endif %}#}
+          </li>
+          <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+            <a href="javascript:;" class="nav-link text-body p-0"
+               id="iconNavbarSidenav">
+              <div class="sidenav-toggler-inner">
+                <i class="sidenav-toggler-line"></i>
+                <i class="sidenav-toggler-line"></i>
+                <i class="sidenav-toggler-line"></i>
+              </div>
+            </a>
+          </li>
+          <li class="nav-item px-3 d-flex align-items-center">
+            <a href="javascript:;" class="nav-link text-body p-0">
+              <i class="fa fa-cog fixed-plugin-button-nav cursor-pointer"></i>
+            </a>
+          </li>
+          <li class="nav-item dropdown pe-2 d-flex align-items-center">
+            <a href="javascript:;"
+               class="nav-link text-body p-0 d-flex align-items-center"
+               id="dropdownMenuButton" data-bs-toggle="dropdown"
+               aria-expanded="false">
+              <i class="fa fa-bell cursor-pointer"></i>
+{#              {% if notification|len_list > 0 %}#}
+{#                <span class="badge bg-gradient-danger badge-circle text-xxs border-radius-2xl m-1 px-2">{{ notification|len_list }}</span>#}
+{#              {% endif %}#}
+            </a>
+            <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4"
+                aria-labelledby="dropdownMenuButton">
+{#                          {% if view_name == 'crm:crm_customers' %}#}
+
+              {% for n in notification %}
+                <li class="mb-2">
+                  <a class="dropdown-item border-radius-md" href="
+/crm/{{ n.content_object.get_my_model_name }}/{{ n.object_id }}/
+">
+                    <div class="d-flex py-1">
+                      <div class="my-auto">
+{#                        <img src="{% static "/assets/img/team-2.jpg" %}"#}
+{#                             class="avatar avatar-sm   ">#}
+                        {% if n.get_my_model_name == 'comment' %}
+                        <i class="fa fa-envelope-o me-4 text-2xl"></i>
+                        {% elif n.get_my_model_name == 'task' %}
+                          <i class="fa fa-exclamation-triangle me-4 text-2xl"></i>
+                        {% endif %}
+                      </div>
+                      <div class="d-flex flex-column justify-content-center">
+                        <h6 class="text-sm font-weight-normal mb-1">
+                          {% if n.get_my_model_name == 'comment' %}
+                          <span class="font-weight-bold">Новый комментарий</span>
+                            {% elif n.get_my_model_name == 'task' %}
+                            <span class="font-weight-bold">Новая задача</span>
+                          {% endif %}
+                          от {{ n.staff }}
+                        </h6>
+                        <p class="text-xs text-secondary mb-0 ">
+                          {% if n.get_my_model_name == 'comment' %}
+                          {{ n.text|slice:":30" }}...
+                          {% elif n.get_my_model_name == 'task' %}
+                          {{ n.task|slice:":30" }}...
+                          {% endif %}
+                          <br>
+                          <i class="fa fa-clock me-1"></i>
+                          {{ n.date }}
+                        </p>
+                      </div>
+                    </div>
+                  </a>
+                <hr class="horizontal dark my-0">
+                </li>
+
+              {% endfor %}
+              {#{% endif %}#}
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+{#<script src="{% static "/pro/assets/js/core/popper.min.js" %}"></script>#}
+{#<script src="{% static "/pro/assets/js/core/bootstrap.min.js" %}"></script>#}
+
+{% endwith %}

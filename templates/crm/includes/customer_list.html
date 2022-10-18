@@ -1,0 +1,148 @@
+{% load widget_tweaks %}
+{% load static %}
+
+<div class="col-12">
+        <div class="card mb-4">
+          <div class="card-header pb-0 container">
+            <div class="row d-flex align-items-center">
+              <div class="collapse {{ show }}" id="collapseFormCustomer">
+
+                  <form action="{{ request.get_full_path }}" method="post" class="row">
+                    {% csrf_token %}
+                    <div class="col-2">
+                      {% if form.last_name.errors %}
+
+                      {% render_field form.last_name class='form-control form-control-alternative is-invalid' placeholder='Фамилия' %}
+
+                      {% else %}
+                      {% render_field form.last_name class='form-control' placeholder='Фамилия' %}
+                      {% endif %}
+                    <span class="text-xs text-secondary mb-0">
+                      {{ form.last_name.errors }}
+                    </span>
+                    </div>
+                    <div class="col-2">
+                      {% if form.first_name.errors %}
+                      {% render_field form.first_name class='form-control form-control-alternative is-invalid' placeholder='Имя' %}
+                      {% else %}
+                      {% render_field form.first_name class='form-control' placeholder='Имя' %}
+                      {% endif %}
+                    <span class="text-xs text-secondary mb-0">
+                      {{ form.first_name.errors }}
+                    </span>
+                    </div>
+                    <div class="col-2">
+                      {% if form.family_name.errors %}
+                      {% render_field form.family_name class='form-control form-control-alternative is-invalid' placeholder='Отчество' %}
+                      {% else %}
+                      {% render_field form.family_name class='form-control' placeholder='Отчество' %}
+                      {% endif %}
+                    <span class="text-xs text-secondary mb-0">
+                      {{ form.family_name.errors }}
+                    </span>
+                    </div>
+                    <div class="col-2">
+                      {% if form.phone.errors %}
+                      {% render_field form.phone class='form-control form-control-alternative is-invalid' placeholder='Телефон' %}
+                      {% else %}
+                      {% render_field form.phone class='form-control' placeholder='Телефон' %}
+                      {% endif %}
+                    <span class="text-xs text-secondary mb-0">
+                      {{ form.phone.errors }}
+                    </span>
+                    </div>
+                    <div class="col-2">
+                      {% render_field form.source class='form-control' %}
+                    <span class="text-xs text-secondary mb-0">
+                      {{ form.source.errors }}
+                    </span>
+                    </div>
+
+                 <button class="btn btn-secondary col-2 h-25" type="submit">Добавить</button>
+
+
+                  </form>
+
+
+              </div>
+          <div class="card-body px-0 pt-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table table-hover align-items-center mb-0">
+                <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    ФИО
+                  </th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                    Номер телефона
+                  </th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    Состояние
+                  </th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    Источник
+                  </th>
+
+                </tr>
+                </thead>
+                <tbody id="customers_list">
+                {% for customer in object_list %}
+                  <tr class="customer">
+                    <td onclick="document.location = '{% url 'crm:crm_customer_detail' customer.pk %}'">
+                      <div class="d-flex px-2 py-1">
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm">{{ customer }}
+
+
+                            {% if customer.unread %}
+                            <span class="badge bg-gradient-danger">+
+                              {{ customer.unread }}
+
+                            </span>
+{% endif %}
+                          </h6>
+{#                          <p class="text-xs text-secondary mb-0">john@creative-tim.com</p>#}
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <p class="text-xs font-weight-bold mb-0">{{ customer.phone }}</p>
+{#                      <p class="text-xs text-secondary mb-0">Organization</p>#}
+                    </td>
+                    <td class="align-middle text-center text-sm">
+                        {% if customer.status == 'Новый' %}
+                          <span class="badge badge-sm bg-gradient-info">
+                          {{ customer.status }}
+                          </span>
+                          {% elif customer.status == 'Есть активные задачи' %}
+                          <span class="badge badge-sm bg-gradient-success">
+                          {{ customer.status }}
+                          </span>
+                          {% elif customer.status == 'Неразобран' %}
+                          <span class="badge badge-sm bg-gradient-danger">
+                          {{ customer.status }}
+                          </span>
+                          {% elif customer.status == 'Неактивный' %}
+                          <span class="badge badge-sm bg-gradient-white">
+                          {{ customer.status }}
+                          </span>
+                          {% else %}
+                          <span class="badge badge-sm bg-gradient-dark">
+                          {{ customer.status }}
+                          </span>
+                        {% endif %}
+                    </td>
+                    <td class="align-middle text-center">
+                      <span class="text-secondary text-xs font-weight-bold">{{ customer.source.source }}</span>
+                    </td>
+
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      </div>

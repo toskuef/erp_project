@@ -1,0 +1,7 @@
+{% load widget_tweaks %}
+<div class="w-100 mx-1 row flex-row" id="form-res">
+  {% render_field new_task.type_task class="form-control ps-2 col form-control-sm mx-1 border-end " %}
+  {% render_field new_task.task class="form-control border-start border-end ps-2 col form-control-sm mx-1 " placeholder="Описание" %}
+  {% render_field new_task.to class="form-control border-start border-end ps-2 col form-control-sm mx-1 " %}
+  {% render_field new_task.deadline class="form-control border-start ps-2 col form-control-sm mx-1 " placeholder="Срок" %}
+</div>

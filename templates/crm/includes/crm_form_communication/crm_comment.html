@@ -1,0 +1,5 @@
+{% load widget_tweaks %}
+<div class="w-100 mx-1 d-flex">
+  {% render_field new_comment.text class="form-control form-control-sm border-end" type="text" placeholder="Комментарий" value="" onfocus="focused(this)" onfocusout="defocused(this)" %}
+  {% render_field new_comment.to class="form-control border-start ps-2 w-50 form-control-sm mx-1" type="text" placeholder="Комментарий" value="" onfocus="focused(this)" onfocusout="defocused(this)" %}
+</div>

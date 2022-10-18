@@ -1,0 +1,33 @@
+{% load widget_tweaks %}
+<form action="{% url 'crm:crm_customer_detail' customer.pk %}" method="post">
+  {% csrf_token %}
+  <div class="d-flex justify-content-between">
+    <div class="list-group-item border-0 ps-0 text-sm"><strong
+            class="text-dark">Фамилия</strong></div>
+    {% render_field edit_customer.last_name class="form-control form-control-sm mb-3 w-50" %}
+  </div>
+<div class="d-flex justify-content-between">
+    <div class="list-group-item border-0 ps-0 text-sm"><strong
+            class="text-dark">Имя</strong></div>
+  {% render_field edit_customer.first_name class="form-control form-control-sm mb-3 w-50" %}
+  </div>
+  <div class="d-flex justify-content-between">
+    <div class="list-group-item border-0 ps-0 text-sm"><strong
+            class="text-dark">Отчество</strong></div>
+  {% render_field edit_customer.family_name class="form-control form-control-sm mb-3 w-50" %}
+    </div>
+    <div class="d-flex justify-content-between">
+    <div class="list-group-item border-0 ps-0 text-sm"><strong
+            class="text-dark">Телефон</strong></div>
+  {% render_field edit_customer.phone class="form-control form-control-sm mb-3 w-50" %}
+      </div>
+    <div class="d-flex justify-content-between">
+    <div class="list-group-item border-0 ps-0 text-sm"><strong
+            class="text-dark">Источник</strong></div>
+  {% render_field edit_customer.source class="form-control form-control-sm mb-3 w-50" %}
+      </div>
+  <div class="d-flex justify-content-between">
+  <button class="btn btn-light" type="submit">Сохранить</button>
+  <a class="btn btn-dark" href="{% url 'crm:crm_customer_detail' customer.pk %}">Отмена</a>
+  </div>
+</form>

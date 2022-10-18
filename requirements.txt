@@ -1,7 +1,5 @@
 requests==2.26.0
 django==3.2.15
-djangorestframework==3.12.4
-PyJWT==2.1.0
 pytest==6.2.4
 pytest-django==4.4.0
 pytest-pythonpath==0.7.3
@@ -13,3 +11,11 @@ pytz==2022.2.1
 setuptools==57.0.0
 typing-extensions==4.3.0
 wheel==0.36.2
+django-forms-dynamic==1.0.0
+django-widget-tweaks==1.4.8
+python-dotenv==0.21.0
+vk-api==11.9.8
+channels==3.0.4
+channels-redis==3.4.0
+uvicorn[standard]
+

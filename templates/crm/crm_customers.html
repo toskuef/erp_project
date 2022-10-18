@@ -1,0 +1,236 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+  Клиенты
+{% endblock %}
+
+<!-- Блок левого меню -->
+{% block sidebar %}
+  {% include 'crm/includes/crm_sidebar.html' %}
+{% endblock %}
+
+<!-- Блок навигации -->
+{% block navigation %}
+  {% include 'crm/includes/crm_navigation.html' %}
+{% endblock %}
+
+<!-- Блок контента -->
+{% block content %}
+
+  <style>
+      tr.customer:hover {
+          cursor: pointer;
+      }
+  </style>
+  <div class="container-fluid py-4">
+
+    <div class="d-sm-flex justify-content-between">
+      <div>
+        <a href="javascript:;" class="btn btn-icon bg-gradient-dark"
+           data-bs-toggle="collapse"
+           data-bs-target="#collapseFormCustomer"
+           aria-expanded="false" aria-controls="collapseFormCustomer">
+          Новый клиент
+        </a>
+      </div>
+      <div class="d-flex">
+        <div class="dropdown d-inline">
+          <a href="javascript:;" class="btn btn-outline-dark dropdown-toggle "
+             data-bs-toggle="dropdown" id="navbarDropdownMenuLink2">
+            Фильтр
+          </a>
+
+          <form class="dropdown-menu dropdown-menu-lg-start px-2 py-3"
+                aria-labelledby="navbarDropdownMenuLink2"
+                data-popper-placement="left-start"
+                hx-get="{% url 'crm:customer-filter' %}" hx-trigger="change"
+                hx-target="#customer-list"
+          >
+
+            <div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox"
+                       value="Неразобран" name="1"
+                       id="defaultCheck1" checked>
+                <label class="form-check-label" for="defaultCheck1">
+                  Неразобран
+                </label>
+              </div>
+            </div>
+            <div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="Новый"
+                       name="2"
+                       id="defaultCheck2" checked>
+                <label class="form-check-label" for="defaultCheck2">
+                  Новый
+                </label>
+              </div>
+            </div>
+            <div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox"
+                       value="Нет активных задач" name="3"
+                       id="defaultCheck3" checked>
+                <label class="form-check-label" for="defaultCheck3">
+                  Нет активных задач
+                </label>
+              </div>
+            </div>
+            <div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox"
+                       value="Есть активные задачи" name="4"
+                       id="defaultCheck4" checked>
+                <label class="form-check-label" for="defaultCheck4">
+                  Есть активные задачи
+                </label>
+              </div>
+            </div>
+            <div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox"
+                       value="Действующий" name="5"
+                       id="defaultCheck5" checked>
+                <label class="form-check-label" for="defaultCheck5">
+                  Действующий
+                </label>
+              </div>
+            </div>
+            <div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox"
+                       value="Неактивный" name="6"
+                       id="defaultCheck6" checked>
+                <label class="form-check-label" for="defaultCheck6">
+                  Неактивный
+                </label>
+              </div>
+            </div>
+            <div>
+              <hr class="horizontal dark my-2">
+            </div>
+            <div>
+              <button class="dropdown-item border-radius-md text-danger"
+              >Сбросить фильтр
+              </button>
+            </div>
+
+          </form>
+
+
+        </div>
+        <button class="btn btn-icon btn-outline-dark ms-2 export"
+                data-type="csv"
+                type="button">
+          <span class="btn-inner--icon"><i class="ni ni-archive-2"></i></span>
+          <span class="btn-inner--text">Экспорт</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="row" id="customer-list">
+      {% include 'crm/includes/customer_list.html' %}
+    </div>
+  <div class="d-flex justify-content-center">
+  <div class="pagination-container justify-content-center">
+    <ul class="pagination pagination-secondary">
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page=1" aria-label="Previous">
+            <span aria-hidden="true"><i class="fa fa-angle-double-left"
+                                        aria-hidden="true"></i></span>
+          </a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.previous_page_number }}"
+             aria-label="Previous">
+          <span aria-hidden="true"><i class="fa fa-angle-left"
+                                      aria-hidden="true"></i></span>
+          </a>
+        </li>
+      {% endif %}
+      {% for i in page_obj.paginator.page_range %}
+        {% if page_obj.number == i %}
+          <li class="page-item active">
+            <a class="page-link text-light" href="javascript:;">{{ i }}</a>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.next_page_number }}"
+             aria-label="Next">
+          <span aria-hidden="true"><i class="fa fa-angle-right"
+                                      aria-hidden="true"></i></span>
+          </a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}"
+             aria-label="Next">
+      <span aria-hidden="true"><i class="fa fa-angle-double-right"
+                                  aria-hidden="true"></i></span>
+          </a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+  </div>
+  </div>
+
+  <script>
+      let url = `ws://0.0.0.0:8001/ws/new_customer/`
+
+      const chatSocket = new WebSocket(url)
+
+      chatSocket.onmessage = function (e) {
+          let data = JSON.parse(e.data)
+          console.log('Data:', data)
+
+          if (data.type === 'new_customer') {
+              let messages = document.getElementById('customers_list')
+
+              messages.insertAdjacentHTML('afterbegin', `
+ <tr class="customer">
+                    <td onclick="document.location = '/crm/customer/${data.status}'">
+                      <div class="d-flex px-2 py-1">
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm">${data.cust}</h6>
+{#                          <p class="text-xs text-secondary mb-0">john@creative-tim.com</p>#}
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <p class="text-xs font-weight-bold mb-0"></p>
+{#                      <p class="text-xs text-secondary mb-0">Organization</p>#}
+                    </td>
+                    <td class="align-middle text-center text-sm">
+
+
+                          <span class="badge badge-sm bg-gradient-info">
+                          Неразобран
+                          </span>
+
+
+                    </td>
+                    <td class="align-middle text-center">
+                      <span class="text-secondary text-xs font-weight-bold">${data.source}</span>
+                    </td>
+
+                  </tr>
+`)
+          }
+      }
+  </script>
+
+
+
+
+
+{% endblock %}
