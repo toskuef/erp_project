@@ -1,0 +1,64 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+  Клиенты
+{% endblock %}
+
+<!-- Блок левого меню -->
+{% block sidebar %}
+  {% include 'crm/includes/crm_sidebar.html' %}
+{% endblock %}
+
+<!-- Блок навигации -->
+{% block navigation %}
+  {% include 'crm/includes/crm_navigation.html' %}
+{% endblock %}
+
+<!-- Блок контента -->
+{% block content %}
+
+
+
+  <div class="container-fluid py-4">
+    <div class="card">
+      <table class="table table-flush dataTable-table" id="datatable-basic">
+        <thead class="thead-light">
+        <tr>
+          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
+              data-sortable="" style="width: 46.7236%;"><a href="#"
+                                                           class="dataTable-sorter">Тип</a>
+          </th>
+          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
+              data-sortable="" style="width: 64.6724%;"><a href="#"
+                                                           class="dataTable-sorter">Название</a>
+          </th>
+          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
+              data-sortable="" style="width: 19.0883%;"><a href="#"
+                                                           class="dataTable-sorter">Ссылка</a>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for elem in search_list %}
+        <tr>
+          <td class="text-sm font-weight-normal">
+            {% if elem.get_my_model_name == 'customer' %}
+            Клиент
+            {% elif elem.get_my_model_name == 'order' %}
+            Заказ покупателя
+            {% elif elem.get_my_model_name == 'product' %}
+            Изделие
+            {% endif %}
+          </td>
+          <td class="text-sm font-weight-normal">{{ elem }}</td>
+          <td class="text-sm font-weight-normal">
+            <a class="btn btn-info mx-3" href="/{{ elem.get_my_model_name }}/{{ elem.pk }}"> Перейти</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

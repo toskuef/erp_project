@@ -497,3 +497,57 @@ def vk(request):
                     }
                 )
         return HttpResponse('ok')
+
+
+class Search(ListView):
+    model = Customer
+    template_name = 'crm/crm_search_list.html'
+
+    def get_queryset(self):
+        unread = {}
+        for dialog in Vkontakte().get_group_conversations['items']:
+            try:
+                if dialog['conversation']['unread_count']:
+                    cust = Customer.objects.filter(
+                        social_web__id_user=dialog['conversation']['peer'][
+                            'id']).values('pk').get()['pk']
+                    unread[cust] = \
+                        dialog['conversation']['unread_count']
+            except:
+                continue
+
+        customers = Customer.objects.annotate(
+            num_task=Sum(Case(When(tasks__is_done=False, then=1))),
+            last_update=(datetime.now() - Max('tasks__date'))).annotate(
+            status=Case(When(is_show=False, then=Value('Неразобран')),
+                        When(last_update=None, then=Value('Новый')),
+                        When(last_update__gt=timedelta(days=10),
+                             then=Value('Неактивный')),
+                        When(num_task__gt=0,
+                             then=Value('Есть активные задачи')),
+                        default=Value('Нет активных задач'))).all()
+        search_query = self.request.GET.get('search', '')
+        for c in customers:
+            if c.pk in unread:
+                c.unread = unread[c.pk]
+        if search_query:
+            return customers.filter(Q(last_name__iregex=search_query))
+        return customers
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        search_query = self.request.GET.get('search', '')
+        orders = Order.objects.filter(Q(title__iregex=search_query) | Q(
+            customer__last_name__iregex=search_query) | Q(
+            customer__first_name__iregex=search_query) | Q(
+            customer__family_name__iregex=search_query))
+        customers = Customer.objects.filter(Q(last_name__iregex=search_query))
+        products = Product.objects.filter(Q(title__iregex=search_query))
+        search_list = list(chain(orders, customers, products))
+        context['search_list'] = search_list
+        comments = Comment.objects.filter(is_show=False, to=self.request.user)
+        tasks = Task.objects.filter(is_show=False, to=self.request.user)
+        context['notification'] = sorted(chain(comments, tasks),
+                                         key=attrgetter('date'), reverse=True)[
+                                  ::-1]
+        return context

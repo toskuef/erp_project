@@ -21,6 +21,7 @@ urlpatterns = [
     path('tasks/done/<int:cust_pk>/<int:pk>/<slug:object>/', views.done_task,
          name='done_task'),
     path('vk/', views.vk),
+    path('search/', views.Search.as_view(), name='search'),
     path('', views.CustomerList.as_view(), name='crm_customers'),
 
 ]
