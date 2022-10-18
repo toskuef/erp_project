@@ -1,8 +1,13 @@
+from import_export.admin import ImportExportModelAdmin
+
 from django.contrib import admin
 from .models import *
 
 
-admin.site.register(Customer)
+@admin.register(Customer)
+class CustomerAdmin(ImportExportModelAdmin):
+    pass
+#admin.site.register(Customer)
 admin.site.register(SourceCustomer)
 admin.site.register(Address)
 admin.site.register(AddressCountry)

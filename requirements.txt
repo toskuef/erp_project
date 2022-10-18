@@ -18,4 +18,4 @@ vk-api==11.9.8
 channels==3.0.4
 channels-redis==3.4.0
 uvicorn[standard]
-
+django-import-export
