@@ -32,11 +32,25 @@ from .services.services import (
     Vkontakte,
     get_customer_addresses)
 
+
+from django.contrib.auth.decorators import login_required
+from django.views.generic import View
+from django.utils.decorators import method_decorator
+
+
+class LoginRequired(View):
+    """
+    Redirects to login if user is anonymous
+    """
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(LoginRequired, self).dispatch(*args, **kwargs)
+
 group_token = '8f9048a4892d2b9a82f14827dea55306849825156c574ad52c9044718b64ee8f085dcdd983da5230d0dac'
 ACTIONS = [['Комментарий', 'comment'], ['Задача', 'task'], ['VK', 'VK']]
 
 
-class CustomerList(ListView):
+class CustomerList(LoginRequired, ListView):
     model = Customer
     template_name = 'crm/crm_customers.html'
     paginate_by = 10
@@ -124,7 +138,7 @@ def customer_list_filter(request):
     return render(request, template_name, {'object_list': object_list})
 
 
-class CustomerDetail(DetailView):
+class CustomerDetail(LoginRequired, DetailView):
     model = Customer
     template_name = 'crm/crm_customer_detail.html'
 
@@ -305,7 +319,7 @@ def get_form_communication(request):
             return render(request, templates[action])
 
 
-class OrderDetail(DetailView):
+class OrderDetail(LoginRequired, DetailView):
     model = Order
     template_name = 'crm/crm_order_detail.html'
 
@@ -506,7 +520,7 @@ def vk(request):
         return HttpResponse('ok')
 
 
-class Search(ListView):
+class Search(LoginRequired, ListView):
     model = Customer
     template_name = 'crm/crm_search_list.html'
 
@@ -560,7 +574,7 @@ class Search(ListView):
         return context
 
 
-class ProductDetail(DetailView):
+class ProductDetail(LoginRequired, DetailView):
     model = Product
     template_name = 'crm/crm_product_detail.html'
 

@@ -8,6 +8,13 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 User = get_user_model()
 
 
+def get_first_name(self):
+    return f'{self.first_name} {self.last_name}'
+
+
+User.add_to_class("__str__", get_first_name)
+
+
 class Customer(models.Model):
     last_name = models.CharField(max_length=100, verbose_name='фамилия')
     first_name = models.CharField(max_length=100, verbose_name='имя')
