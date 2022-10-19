@@ -7,14 +7,25 @@ from .models import *
 @admin.register(Customer)
 class CustomerAdmin(ImportExportModelAdmin):
     pass
-#admin.site.register(Customer)
 admin.site.register(SourceCustomer)
-admin.site.register(Address)
-admin.site.register(AddressCountry)
-admin.site.register(AddressArea)
-admin.site.register(AddressRegion)
-admin.site.register(AddressTown)
-admin.site.register(AddressStreet)
+@admin.register(Address)
+class AddressAdmin(ImportExportModelAdmin):
+    pass
+@admin.register(AddressCountry)
+class AddressCountryAdmin(ImportExportModelAdmin):
+    pass
+@admin.register(AddressArea)
+class AddressAreaAdmin(ImportExportModelAdmin):
+    pass
+@admin.register(AddressRegion)
+class AddressRegionAdmin(ImportExportModelAdmin):
+    pass
+@admin.register(AddressTown)
+class AddressTownAdmin(ImportExportModelAdmin):
+    pass
+@admin.register(AddressStreet)
+class AddressStreetAdmin(ImportExportModelAdmin):
+    pass
 admin.site.register(Order)
 admin.site.register(TypePay)
 admin.site.register(StatusOrder)
