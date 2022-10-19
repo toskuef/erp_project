@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime, timedelta
 from itertools import chain
 from operator import attrgetter
@@ -10,14 +11,20 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView
+
+import httplib2
+from apiclient import discovery
+from oauth2client.service_account import ServiceAccountCredentials
 from vk_api import vk_api
 from vk_api.utils import get_random_id
 
+from core import settings
 from crm.models import Customer, Comment, Task, AddressCountry, AddressArea, \
     AddressRegion, AddressTown, AddressStreet, Address, Order, Product, \
-    SocialWebCustomers, SourceCustomer
+    SocialWebCustomers, SourceCustomer, Measuring, Project, Files
 from .forms import CustomerForm, CommentForm, TaskForm, OrderForm, AddressForm, \
-    CountryForm, AreaForm, RegionForm, TownForm, StreetForm, ProductForm
+    CountryForm, AreaForm, RegionForm, TownForm, StreetForm, ProductForm, \
+    MeasuringForm, ProjectForm
 
 from .services.services import (
     get_context_comm_window,
@@ -551,3 +558,117 @@ class Search(ListView):
                                          key=attrgetter('date'), reverse=True)[
                                   ::-1]
         return context
+
+
+class ProductDetail(DetailView):
+    model = Product
+    template_name = 'crm/crm_product_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProductDetail, self).get_context_data(**kwargs)
+        context['new_measuring'] = MeasuringForm
+        context['new_project'] = ProjectForm
+        context['measurings'] = Measuring.objects.filter(
+            product=self.kwargs['pk'])
+        context['projects'] = Project.objects.filter(
+            product=self.kwargs['pk'])
+        comments = Comment.objects.filter(is_show=False, to=self.request.user)
+        tasks = Task.objects.filter(is_show=False, to=self.request.user)
+        context['notification'] = sorted(chain(comments, tasks),
+                                         key=attrgetter('date'), reverse=True)[
+                                  ::-1]
+        context['files'] = Files.objects.filter(product_id=self.kwargs['pk'])
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            if 'measuring' in request.FILES:
+                form = MeasuringForm(request.POST, request.FILES)
+                measuring = form.save(commit=False)
+                measuring.product = Product.objects.get(pk=self.kwargs['pk'])
+                measuring.save()
+                return redirect('crm:crm_product_detail', pk=self.kwargs['pk'])
+            if 'project' in request.FILES:
+                form = ProjectForm(request.POST, request.FILES)
+                project = form.save(commit=False)
+                project.product = Product.objects.get(pk=self.kwargs['pk'])
+                project.save()
+                return redirect('crm:crm_product_detail', pk=self.kwargs['pk'])
+
+
+def add_file(request, pk, object):
+    CREDENTIALS_FILE = os.path.join(settings.BASE_DIR,
+                                    'toskins-0a3491bf4bd5.json')
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(
+        CREDENTIALS_FILE,
+        ['https://www.googleapis.com/auth/spreadsheets',
+         'https://www.googleapis.com/auth/drive'])
+    httpAuth = credentials.authorize(httplib2.Http())
+    service = discovery.build('sheets', 'v4', http=httpAuth)
+    driveService = discovery.build('drive', 'v3', http=httpAuth)
+
+    prod = Product.objects.get(pk=pk)
+    ord = Order.objects.get(products=prod)
+    cust = Customer.objects.get(orders=ord)
+
+    if object == 'rs':
+        sh_price = '1deqUBgXTOnAqZNklsAhqCJcx5p68FfrHpopKJHT7Jhw'
+        folder = '1-5Qscphr4n_hGPGGnLFkO84LD2pjicP0'
+        newfile = {'name': f'Расчет ({datetime.now().date()}): {str(cust)} - {str(prod)}',
+                   'parents': [folder]}
+        new_price = driveService.files().copy(
+            fileId=sh_price, body=newfile).execute()
+        new_price_id = new_price['id']
+        driveService.permissions().create(
+            fileId=new_price_id,
+            body={'type': 'user', 'role': 'writer',
+                  'emailAddress': 'princealexxx.623@gmail.com'},
+            fields='id'
+        ).execute()
+
+        Files.objects.create(sheet_id=new_price_id, type_file=object,
+                             product=Product.objects.get(pk=pk))
+
+    elif object == 'zam':
+        folder = '1-5Qscphr4n_hGPGGnLFkO84LD2pjicP0'
+        file_metadata = {
+            'name': f'Замер ({datetime.now().date()}): {str(cust)} - {str(prod)}',
+            'mimeType': 'application/vnd.google-apps.folder',
+            'parents': [folder]
+        }
+        new_folder = driveService.files().create(body=file_metadata, fields='id').execute()
+        folder_id = new_folder['id']
+        driveService.permissions().create(
+            fileId=folder_id,
+            body={'type': 'user', 'role': 'writer',
+                  'emailAddress': 'princealexxx.623@gmail.com'},
+            fields='id'
+        ).execute()
+
+        Files.objects.create(sheet_id=folder_id, type_file=object,
+                             product=Product.objects.get(pk=pk))
+
+    elif object == 'pr':
+        folder = '1-5Qscphr4n_hGPGGnLFkO84LD2pjicP0'
+        file_metadata = {
+            'name': f'Проект ({datetime.now().date()}): {str(cust)} - {str(prod)}',
+            'mimeType': 'application/vnd.google-apps.folder',
+            'parents': [folder]
+        }
+        new_folder = driveService.files().create(body=file_metadata, fields='id').execute()
+        folder_id = new_folder['id']
+        driveService.permissions().create(
+            fileId=folder_id,
+            body={'type': 'user', 'role': 'writer',
+                  'emailAddress': 'princealexxx.623@gmail.com'},
+            fields='id'
+        ).execute()
+
+        Files.objects.create(sheet_id=folder_id, type_file=object,
+                             product=Product.objects.get(pk=pk))
+
+
+    print([i for i in str(cust)])
+
+    return render(request, 'crm/includes/crm_product_files.html',
+                  {'files': Files.objects.filter(product_id=pk)})
