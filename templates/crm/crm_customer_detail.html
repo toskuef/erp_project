@@ -22,7 +22,7 @@
 {% block content %}
 <button class="btn bg-gradient-primary mb-0" onclick="soft.showSwal('basic')">Try me!</button>
 
-{#<script src="{% static "/pro/assets/js/soft-ui-dashboard.min.js" %}"></script>#}
+<script src="{% static "/pro/assets/js/soft-ui-dashboard.min.js" %}"></script>
   <style>
       .scrolling-wrapper {
           overflow-x: auto;
@@ -254,6 +254,6 @@
           }, 100);
       })
   </script>
-<script src="{% static "/pro/assets/js/soft-ui-dashboard.min.js" %}"></script>
+{#<script src="{% static "/pro/assets/js/soft-ui-dashboard.min.js" %}"></script>#}
   {% include 'scripts.html' %}
 {% endblock %}
