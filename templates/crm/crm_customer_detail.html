@@ -21,8 +21,25 @@
 <!-- Блок контента -->
 {% block content %}
 <button class="btn bg-gradient-primary mb-0" onclick="soft.showSwal('basic')">Try me!</button>
-
-<script src="{% static "/pro/assets/js/soft-ui-dashboard.min.js" %}"></script>
+{#  <script>#}
+{#  var soft = {showSwal: function (e) {#}
+{#        if ("basic" == e) Swal.fire("Any fool can use a compuаааter"); else if ("title-and-text" == e) {#}
+{#            const t = Swal.mixin({#}
+{#                customClass: {#}
+{#                    confirmButton: "btn bg-gradient-success",#}
+{#                    cancelButton: "btn bg-gradient-danger"#}
+{#                }#}
+{#            });#}
+{#            t.fire({#}
+{#                title: "Sweet!",#}
+{#                text: "Modal with a custom image.",#}
+{#                imageUrl: "https://unsplash.it/400/200",#}
+{#                imageWidth: 400,#}
+{#                imageAlt: "Custom image"#}
+{#            })#}
+{#        }}}#}
+{#  </script>#}
+<script src="{% static "/pro/assets/js/soft-ui-dashboard.js" %}"></script>
   <style>
       .scrolling-wrapper {
           overflow-x: auto;
@@ -254,6 +271,4 @@
           }, 100);
       })
   </script>
-{#<script src="{% static "/pro/assets/js/soft-ui-dashboard.min.js" %}"></script>#}
-  {% include 'scripts.html' %}
 {% endblock %}
