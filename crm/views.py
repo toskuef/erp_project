@@ -686,3 +686,4 @@ def add_file(request, pk, object):
 
     return render(request, 'crm/includes/crm_product_files.html',
                   {'files': Files.objects.filter(product_id=pk)})
+
