@@ -47,7 +47,9 @@
   <!-- Alpine -->
   <script defer
           src="https://unpkg.com/alpinejs@3.10.2/dist/cdn.min.js"></script>
-
+<!--   Core JS Files   -->
+{% include 'scripts.html' %}
+</head>
 <body class="g-sidenav-show  bg-gray-100">
 {% block sidebar %}{% endblock %}
 <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
@@ -57,8 +59,7 @@
 
   {% block content %}{% endblock %}
 </main>
-<!--   Core JS Files   -->
-{% include 'scripts.html' %}
+
 </body>
 
 </html>
