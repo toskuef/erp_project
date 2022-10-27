@@ -411,8 +411,8 @@ class OrderDetail(LoginRequired, DetailView):
         context['notification'] = sorted(chain(comments, tasks),
                                          key=attrgetter('date'), reverse=True)[
                                   ::-1]
-        # context['actions'] = ACTIONS
-        # context.update(get_context_comm_window(Order, order_id))
+        context['actions'] = ACTIONS
+        context.update(get_context_comm_window(Order, order_id))
         return context
 
     def post(self, request, *args, **kwargs):
@@ -425,8 +425,7 @@ class OrderDetail(LoginRequired, DetailView):
                 comment.content_object = order
                 comment.staff = request.user
                 comment.save()
-                context = {}
-                # context = get_context_comm_window(Order, self.kwargs['pk'])
+                context = get_context_comm_window(Order, self.kwargs['pk'])
                 return render(request, template, context)
             if 'task' in request.POST:
                 print(request.POST)
