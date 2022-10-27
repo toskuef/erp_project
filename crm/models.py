@@ -110,11 +110,16 @@ class Address(models.Model):
         null=True,
         blank=True
     )
-    num_house = models.IntegerField(verbose_name='номер дома', blank=True)
-    num_housing = models.IntegerField(verbose_name='номер корпуса', blank=True)
-    num_door = models.IntegerField(verbose_name='номер подъезда', blank=True)
-    num_level = models.IntegerField(verbose_name='номер этажа', blank=True)
-    num_flat = models.IntegerField(verbose_name='номер квартиры', blank=True)
+    num_house = models.CharField(verbose_name='номер дома', max_length=10,
+                                 blank=True, null=True)
+    num_housing = models.IntegerField(verbose_name='номер корпуса', blank=True,
+                                      null=True)
+    num_door = models.IntegerField(verbose_name='номер подъезда', blank=True,
+                                   null=True)
+    num_level = models.IntegerField(verbose_name='номер этажа', blank=True,
+                                    null=True)
+    num_flat = models.IntegerField(verbose_name='номер квартиры', blank=True,
+                                   null=True)
 
     class Meta:
         verbose_name = 'адрес'
