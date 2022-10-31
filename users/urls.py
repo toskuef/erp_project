@@ -10,6 +10,9 @@ from . import views
 app_name = 'users'
 
 urlpatterns = [
+    path('profile/<int:pk>/',
+         views.ProfileUser.as_view(),
+         name='profile'),
     path('logout/',
          LogoutView.as_view(),
          name='logout'),

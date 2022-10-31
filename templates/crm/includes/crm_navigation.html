@@ -24,7 +24,7 @@
         </div>
         <ul class="navbar-nav  justify-content-end">
 
-          <li class="nav-item d-flex align-items-center">
+{#          <li class="nav-item d-flex align-items-center">#}
 {#            {% if request.user.is_authenticated %}#}
 {#              <a href="{% url 'users:logout' %}"#}
 {#                 class="nav-link text-body font-weight-bold px-0">#}
@@ -32,7 +32,7 @@
 {#                <span class="d-sm-inline d-none">Выйти</span>#}
 {#              </a>#}
 {#            {% endif %}#}
-          </li>
+{#          </li>#}
           <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
             <a href="javascript:;" class="nav-link text-body p-0"
                id="iconNavbarSidenav">
@@ -44,8 +44,9 @@
             </a>
           </li>
           <li class="nav-item px-3 d-flex align-items-center">
-            <a href="javascript:;" class="nav-link text-body p-0">
-              <i class="fa fa-cog fixed-plugin-button-nav cursor-pointer"></i>
+            <a href="{% url 'users:profile' request.user.pk %}" class="nav-link text-body p-0">
+              <i class="fa {% if view_name == 'users:profile'  %} fa-user {% else %} fa-user-o {% endif %} fixed-plugin-button-nav cursor-pointer"></i>
+              Личный кабинет
             </a>
           </li>
           <li class="nav-item dropdown pe-2 d-flex align-items-center">
