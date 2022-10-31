@@ -43,12 +43,14 @@
               </div>
             </a>
           </li>
+        {% if request.user.is_authenticated %}
           <li class="nav-item px-3 d-flex align-items-center">
-            <a href="{% url 'users:profile' request.user.pk %}" class="nav-link text-body p-0">
+            <a href="{% url 'users:profile' request.user.user.pk %}" class="nav-link text-body p-0">
               <i class="fa {% if view_name == 'users:profile'  %} fa-user {% else %} fa-user-o {% endif %} fixed-plugin-button-nav cursor-pointer"></i>
               Личный кабинет
             </a>
           </li>
+        {% endif %}
           <li class="nav-item dropdown pe-2 d-flex align-items-center">
             <a href="javascript:;"
                class="nav-link text-body p-0 d-flex align-items-center"
