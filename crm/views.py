@@ -327,7 +327,7 @@ class OrderDetail(LoginRequired, DetailView):
         self.object = self.get_object()
         context = self.get_context_data(object=self.object)
         Comment.objects.filter(is_show=False, to=self.request.user,
-                               content_type=15,
+                               content_type=13,
                                object_id=self.kwargs['pk']).update(
             is_show=True)
 
