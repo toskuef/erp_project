@@ -54,9 +54,9 @@
                id="dropdownMenuButton" data-bs-toggle="dropdown"
                aria-expanded="false">
               <i class="fa fa-bell cursor-pointer"></i>
-{#              {% if notification|len_list > 0 %}#}
-{#                <span class="badge bg-gradient-danger badge-circle text-xxs border-radius-2xl m-1 px-2">{{ notification|len_list }}</span>#}
-{#              {% endif %}#}
+              {% if notification|len_list > 0 %}
+                <span class="badge bg-gradient-danger badge-circle text-xxs border-radius-2xl m-1 px-2">{{ notification|len_list }}</span>
+              {% endif %}
             </a>
             <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4"
                 aria-labelledby="dropdownMenuButton">

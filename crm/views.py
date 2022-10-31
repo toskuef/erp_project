@@ -46,7 +46,7 @@ class LoginRequired(View):
     def dispatch(self, *args, **kwargs):
         return super(LoginRequired, self).dispatch(*args, **kwargs)
 
-group_token = '8f9048a4892d2b9a82f14827dea55306849825156c574ad52c9044718b64ee8f085dcdd983da5230d0dac'
+group_token = 'vk1.a.QFfRyZ7gjlvH6GcFDvq2jYY9Il2F8K9CzoQNoI3HF3qRCsQRM5Cr08pU2bwTXHbfzFsEGkBwYmPzZ2JU3gszmcZ6BVOQFkH2ZVs_M-z2NVlyEbh1ykGvmOVhz1L8PoCgmbjKo4hQfHmInjIi0V1cIke2KqfudBCId0k7WEcr3djEPZUZiyIipm4y_dHVyPKnM3YW2Z6jlGauYbI56q2B3Q'
 ACTIONS = [['Комментарий', 'comment'], ['Задача', 'task'], ['VK', 'VK']]
 
 
