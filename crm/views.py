@@ -243,7 +243,8 @@ class CustomerDetail(LoginRequired, DetailView):
                 vk_session = vk_api.VkApi(token=group_token)
                 vk = vk_session.get_api()
                 vk.messages.send(
-                    user_id=customer.social_web.get(name_social=1),
+                    user_id=getattr(customer.social_web.get(name_social=1),
+                                    'id_user'),
                     random_id=get_random_id(),
                     message=answer
                 )

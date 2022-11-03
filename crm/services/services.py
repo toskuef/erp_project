@@ -66,7 +66,8 @@ def get_context_comm_window(model, pk):
         curent_customer = current_obj
     try:
         history = vk.get_history_message(
-            curent_customer.social_web.get(name_social=1), 10)
+            getattr(curent_customer.social_web.get(name_social=1), 'id_user'),
+            10)
     except:
         history = []
     context = get_all_context(
