@@ -1,0 +1,170 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+  Клиенты
+{% endblock %}
+
+<!-- Блок левого меню -->
+{% block sidebar %}
+  {% include 'crm/includes/crm_sidebar.html' %}
+{% endblock %}
+
+<!-- Блок навигации -->
+{% block navigation %}
+  {% include 'crm/includes/crm_navigation.html' %}
+{% endblock %}
+
+<!-- Блок контента -->
+{% block content %}
+
+  <style>
+      tr.customer:hover {
+          cursor: pointer;
+      }
+  </style>
+  <div class="container-fluid py-4">
+
+  <div class="card-body px-0 pt-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table table-hover align-items-center mb-0">
+                <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    ЛИД
+                  </th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                    Клиент
+                  </th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    Привязать клиента
+                  </th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    Создать нового клиента
+                  </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for lead in leads %}
+                  <form action="{% url 'crm:crm_lead' %}" method="post">
+                     {% csrf_token %}
+                  <tr class="customer">
+                    <td>
+                      <div class="d-flex px-2 py-1">
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm">{{ lead }}
+                          </h6>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="d-flex justify-content-between">
+                        <template id="customer_template">
+                          {% for customer in customers %}
+                            <option>{{ customer.last_name }} {{ customer.first_name }} {{ customer.family_name }} {{ customer.phone }}</option>
+                          {% endfor %}
+                        </template>
+                        {% render_field customer_form.first_name type="text" name="last_name" id="customer" placeholder="first_name" list="customer_results" autocomplete="off" class='form-control form-control-sm mb-2 w-50' %}
+                        <datalist id="customer_results"></datalist>
+                        <input type="hidden" value="{{ lead.id_user }}"
+                               name="id_vk">
+                        <input type="hidden" value="{{ lead.pk }}"
+                               name="lead_pk">
+                      </div>
+                    </td>
+                    <td class="align-middle text-center text-sm">
+                      <button class="btn btn-light text-xxs m-0 p-2"
+                                type="submit">Привязать
+                        </button>
+                    </td>
+                  </form>
+                  <form action="{% url 'crm:crm_lead' %}" method="post">
+                  {% csrf_token %}
+                    <td class="align-middle text-center">
+                      <input type="hidden" value="{{ lead.pk }}"
+                               name="lead">
+                      <input type="hidden" value="{{ lead.id_user }}"
+                               name="id_vk">
+                      <input type="hidden" value="{{ lead.last_name }}"
+                               name="last_name">
+                      <input type="hidden" value="{{ lead.first_name }}"
+                               name="first_name">
+                      <button class="btn btn-success text-xxs m-0 p-2"
+                                type="submit">Создать
+                        </button>
+                    </td>
+                  </form>
+                  </tr>
+
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+  <script>
+      let url = `ws://0.0.0.0:8001/ws/new_customer/`
+
+      const chatSocket = new WebSocket(url)
+
+      chatSocket.onmessage = function (e) {
+          let data = JSON.parse(e.data)
+          console.log('Data:', data)
+
+          if (data.type === 'new_customer') {
+              let messages = document.getElementById('customers_list')
+
+              messages.insertAdjacentHTML('afterbegin', `
+ <tr class="customer">
+                    <td onclick="document.location = '/crm/customer/${data.status}'">
+                      <div class="d-flex px-2 py-1">
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm">${data.cust}</h6>
+{#                          <p class="text-xs text-secondary mb-0">john@creative-tim.com</p>#}
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <p class="text-xs font-weight-bold mb-0"></p>
+{#                      <p class="text-xs text-secondary mb-0">Organization</p>#}
+                    </td>
+                    <td class="align-middle text-center text-sm">
+
+
+                          <span class="badge badge-sm bg-gradient-info">
+                          Неразобран
+                          </span>
+
+
+                    </td>
+                    <td class="align-middle text-center">
+                      <span class="text-secondary text-xs font-weight-bold">${data.source}</span>
+                    </td>
+
+                  </tr>
+`)
+          }
+      }
+  </script>
+
+  <script>
+      var customer = document.querySelector('#customer');
+      var customer_results = document.querySelector('#customer_results');
+      var customer_template = document.querySelector('#customer_template').content;
+      customer.addEventListener('keyup', function handler(event) {
+          while (customer_results.children.length) customer_results.removeChild(customer_results.firstChild);
+          var customer_inputVal = new RegExp(customer.value.trim(), 'i');
+          var customer_clonedOptions = customer_template.cloneNode(true);
+          var customer_set = Array.prototype.reduce.call(customer_clonedOptions.children, function searchFilter(frag, el) {
+              if (customer_inputVal.test(el.textContent) && frag.children.length < 5) frag.appendChild(el);
+              return frag;
+          }, document.createDocumentFragment());
+          customer_results.appendChild(customer_set);
+      });
+  </script>
+
+
+
+
+{% endblock %}

@@ -22,6 +22,7 @@ urlpatterns = [
     path('tasks/done/<int:cust_pk>/<int:pk>/<slug:object>/', views.done_task,
          name='done_task'),
     path('vk/', views.vk),
+    path('lead/', views.LeadList.as_view(), name='crm_lead'),
     path('search/', views.Search.as_view(), name='search'),
     path('add-file/<int:pk>/<slug:object>/', views.add_file, name='add_file'),
     path('', views.CustomerList.as_view(), name='crm_customers'),

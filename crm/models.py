@@ -428,3 +428,14 @@ class Files(models.Model):
 
     class Meta:
         ordering = ['-date']
+
+
+class Lead(models.Model):
+    last_name = models.CharField(max_length=100, verbose_name='фамилия')
+    first_name = models.CharField(max_length=100, verbose_name='имя')
+    family_name = models.CharField(max_length=100, verbose_name='отчество')
+    id_user = models.CharField(max_length=100, verbose_name='ID')
+    is_customer = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.last_name} {self.first_name}'

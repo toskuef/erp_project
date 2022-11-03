@@ -106,5 +106,3 @@ class StreetForm(forms.ModelForm):
         model = AddressStreet
         fields = '__all__'
 
-
-

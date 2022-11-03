@@ -21,7 +21,7 @@ from vk_api.utils import get_random_id
 from core import settings
 from crm.models import Customer, Comment, Task, AddressCountry, AddressArea, \
     AddressRegion, AddressTown, AddressStreet, Address, Order, Product, \
-    SocialWebCustomers, SourceCustomer, Measuring, Project, Files
+    SocialWebCustomers, SourceCustomer, Measuring, Project, Files, Lead
 from .forms import CustomerForm, CommentForm, TaskForm, OrderForm, AddressForm, \
     CountryForm, AreaForm, RegionForm, TownForm, StreetForm, ProductForm, \
     MeasuringForm, ProjectForm
@@ -482,8 +482,7 @@ def vk(request):
             obj_message = event['object']['message']
             vk_id = str(obj_message['from_id'])
             channel_layer = get_channel_layer()
-            if SocialWebCustomers.objects.filter(name_social=1,
-                                                 id_user=vk_id).exists():
+            if Lead.objects.filter(id_user=vk_id).exists():
                 text = str(obj_message['text'])
                 date = int(obj_message['date'])
                 date = datetime.utcfromtimestamp(date) + timedelta(hours=3)
@@ -498,14 +497,14 @@ def vk(request):
                 )
             else:
                 new_user = Vkontakte().get_info_user(vk_id=vk_id)[0]
-                new_customer = Customer.objects.create(
+                new_customer = Lead.objects.create(
                     last_name=new_user['last_name'],
                     first_name=new_user['first_name'],
-                    source=SourceCustomer.objects.get(pk=1))
-                SocialWebCustomers.objects.create(customer=new_customer,
-                                                  name_social=SourceCustomer.objects.get(
-                                                      pk=1),
-                                                  id_user=vk_id)
+                    id_user=vk_id)
+                # SocialWebCustomers.objects.create(customer=new_customer,
+                #                                   name_social=SourceCustomer.objects.get(
+                #                                       pk=1),
+                #                                   id_user=vk_id)
                 pk = new_customer.pk
                 async_to_sync(channel_layer.group_send)(
                     'new_customer',
@@ -686,3 +685,48 @@ def add_file(request, pk, object):
     return render(request, 'crm/includes/crm_product_files.html',
                   {'files': Files.objects.filter(product_id=pk)})
 
+
+class LeadList(ListView):
+    template_name = 'crm/crm_lead.html'
+    model = Lead
+    paginate_by = 10
+    context_object_name = 'leads'
+
+    def get_queryset(self):
+        leads = Lead.objects.filter(is_customer=False)
+        return leads
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        customers = Customer.objects.filter(social_web__id_user__isnull=True)
+        context['customers'] = customers
+        customer_form = CustomerForm
+        context['customer_form'] = customer_form
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            if 'lead_pk' in request.POST:
+                name = request.POST['first_name']
+                last_name = name.split(' ')[0]
+                first_name = name.split(' ')[1]
+                family_name = name.split(' ')[2]
+                customer = Customer.objects.get(last_name=last_name,
+                                                first_name=first_name,
+                                                family_name=family_name)
+                Lead.objects.filter(pk=request.POST['lead_pk']).update(
+                    is_customer=True)
+            else:
+                customer = Customer.objects.create(last_name=request.POST['last_name'],
+                                                   first_name=request.POST['first_name'],
+                                                   is_show=True,
+                                                   creater_customer=request.user,
+                                                   source=SourceCustomer.objects.get(
+                                                       pk=1),
+                                                   )
+                Lead.objects.filter(pk=request.POST['lead']).update(is_customer=True)
+            SocialWebCustomers.objects.create(customer=customer,
+                                              name_social=SourceCustomer.objects.get(
+                                                  pk=1),
+                                              id_user=request.POST['id_vk'])
+            return redirect('crm:crm_lead')
