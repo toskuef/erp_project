@@ -413,7 +413,7 @@ class SocialWebCustomers(models.Model):
     id_user = models.CharField(max_length=100, verbose_name='ID')
 
     def __str__(self):
-        return self.id_user
+        return self.customer
 
 
 class Files(models.Model):
