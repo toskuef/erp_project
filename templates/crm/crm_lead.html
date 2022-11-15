@@ -60,13 +60,30 @@
                     </td>
                     <td>
                       <div class="d-flex justify-content-between">
-                        <template id="customer_template">
-                          {% for customer in customers %}
-                            <option>{{ customer.last_name }} {{ customer.first_name }} {{ customer.family_name }} {{ customer.phone }}</option>
-                          {% endfor %}
-                        </template>
-                        {% render_field customer_form.first_name type="text" name="last_name" id="customer" placeholder="first_name" list="customer_results" autocomplete="off" class='form-control form-control-sm mb-2 w-50' %}
-                        <datalist id="customer_results"></datalist>
+
+{#                          {% for customer in customers %}#}
+{#                            <option>{{ customer.last_name }} {{ customer.first_name }} {{ customer.family_name }} {{ customer.phone }}</option>#}
+{#                          {% endfor %}#}
+
+{#                        {% render_field customer_form.first_name type="text" name="last_name" id="customer" placeholder="first_name" list="customer_results" autocomplete="off" class='form-control form-control-sm mb-2 w-50' %}#}
+                      <select class="form-control" name="first_name" id="choices-multiple-remove-button_{{ lead.pk }}">
+{#              <option value="Choice 1" selected>Choice 1</option>#}
+{#              <option value="Choice 2">Choice 2</option>#}
+{#              <option value="Choice 3">Choice 3</option>#}
+{#              <option value="Choice 4">Choice 4</option>#}
+                        {% for customer in customers %}
+                          <option>{{ customer.last_name }} {{ customer.first_name }} {{ customer.family_name }} {{ customer.phone }}</option>
+                        {% endfor %}
+                      </select>
+                        <script>
+                            if (document.getElementById('choices-multiple-remove-button_{{ lead.pk }}')) {
+                                var element = document.getElementById('choices-multiple-remove-button_{{ lead.pk }}');
+                                const example = new Choices(element, {
+                                    removeItemButton: true,
+                                    renderChoiceLimit: 2,
+                                });
+                            }
+                        </script>
                         <input type="hidden" value="{{ lead.id_user }}"
                                name="id_vk">
                         <input type="hidden" value="{{ lead.pk }}"
@@ -102,7 +119,7 @@
               </table>
             </div>
           </div>
-
+  </div>
   <script>
       let url = `ws://0.0.0.0:8001/ws/new_customer/`
 
@@ -148,21 +165,7 @@
       }
   </script>
 
-  <script>
-      var customer = document.querySelector('#customer');
-      var customer_results = document.querySelector('#customer_results');
-      var customer_template = document.querySelector('#customer_template').content;
-      customer.addEventListener('keyup', function handler(event) {
-          while (customer_results.children.length) customer_results.removeChild(customer_results.firstChild);
-          var customer_inputVal = new RegExp(customer.value.trim(), 'i');
-          var customer_clonedOptions = customer_template.cloneNode(true);
-          var customer_set = Array.prototype.reduce.call(customer_clonedOptions.children, function searchFilter(frag, el) {
-              if (customer_inputVal.test(el.textContent) && frag.children.length < 5) frag.appendChild(el);
-              return frag;
-          }, document.createDocumentFragment());
-          customer_results.appendChild(customer_set);
-      });
-  </script>
+
 
 
 

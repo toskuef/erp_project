@@ -708,7 +708,9 @@ class LeadList(ListView):
     def post(self, request, *args, **kwargs):
         if request.method == 'POST':
             if 'lead_pk' in request.POST:
-                name = request.POST['first_name']
+                print(request.POST)
+                name = request.POST.getlist('first_name')[0]
+                print(name)
                 last_name = name.split(' ')[0]
                 first_name = name.split(' ')[1]
                 family_name = name.split(' ')[2]
