@@ -687,7 +687,7 @@ def add_file(request, pk, object):
                   {'files': Files.objects.filter(product_id=pk)})
 
 
-class LeadList(ListView):
+class LeadList(LoginRequired, ListView):
     template_name = 'crm/crm_lead.html'
     model = Lead
     paginate_by = 10
