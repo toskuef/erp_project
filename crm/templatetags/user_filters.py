@@ -10,6 +10,11 @@ def addclass(field):
     return datetime.utcfromtimestamp(field).strftime('%Y-%m-%d %H:%M:%S')
 
 
+@register.filter(name='add_id')
+def add_id(value, arg):
+    return value.as_widget(attrs={'id': arg})
+
+
 @register.filter
 def unix_to_date(field):
     return datetime.utcfromtimestamp(field).strftime('%Y-%m-%d %H:%M:%S')
