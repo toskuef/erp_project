@@ -7,8 +7,9 @@ from .validation import validation_ru_letters, validation_phone
 
 
 class CustomerForm(forms.ModelForm):
-    fio_choices = forms.ModelChoiceField(queryset=Customer.objects.all(),
-                                         widget=forms.Select(attrs={
+    fio_choices = forms.ModelChoiceField(
+        queryset=Customer.objects.filter(social_web__id_user__isnull=True),
+        widget=forms.Select(attrs={
                                              'class': 'form-control col',
                                              'name': 'first_name'
 

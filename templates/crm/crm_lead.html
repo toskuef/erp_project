@@ -47,73 +47,86 @@
 {#                </tr>#}
 {#                </thead>#}
 {#                <tbody>#}
-  <div class="container-fluid">
-                {% for lead in leads %}
+  <div class="container-fluid my-3">
+    <div class="row mb-3">
+      <div class="col-11">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-4 text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+              ЛИД
+            </div>
+            <div class="col-6 text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+              Клиенты
+            </div>
+            <div class="col-2 text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+              Привязать к клиенту
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-1 text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+        Создать клиента
+      </div>
+    </div>
+    {% for lead in leads %}
+      <div class="row">
+        <form action="{% url 'crm:crm_lead' %}" method="post" class="col-11">
+          <div class="container-fluid">
+            <div class="row">
 
-                  <div class="row">
-                  <form action="{% url 'crm:crm_lead' %}" method="post" class="col-11">
-                    <div class="container-fluid">
-                    <div class="row">
+              {% csrf_token %}
 
-                     {% csrf_token %}
+              <div class="col-4">
+                <h6 class="mb-0 text-sm">{{ lead }}
+                </h6>
+              </div>
 
-                      <div class="col-4">
-                          <h6 class="mb-0 text-sm">{{ lead }}
-                          </h6>
-                      </div>
+              <div class="col-6">
+                {{ customer_form.fio_choices|add_id:lead.pk }}
+                <script>
+                    if (document.getElementById({{ lead.pk }})) {
+                        var element = document.getElementById({{ lead.pk }});
+                        const example = new Choices(element);
+                    }
+                </script>
+              </div>
 
-<div class="col-6">
-                        {{ customer_form.fio_choices|add_id:lead.pk }}
-                        <script>
-                            if (document.getElementById({{ lead.pk }})) {
-                                var element = document.getElementById({{ lead.pk }});
-                                const example = new Choices(element);
-                            }
-                        </script>
-</div>
-
-                        <input type="hidden" value="{{ lead.id_user }}"
-                               name="id_vk">
-
-
-                        <input type="hidden" value="{{ lead.pk }}"
-                               name="lead_pk">
-
-
-
-
-<div class="col-2">
-                      <button class="btn btn-light text-xxs m-0 p-2 "
-                                type="submit">Привязать
-                        </button>
-</div>
-                      </div>
-                    </div>
-                  </form>
-
-
-
-
-                  <form action="{% url 'crm:crm_lead' %}" method="post" class="col-1">
-                  {% csrf_token %}
-                    <td class="align-middle text-center">
-                      <input type="hidden" value="{{ lead.pk }}"
-                               name="lead">
-                      <input type="hidden" value="{{ lead.id_user }}"
-                               name="id_vk">
-                      <input type="hidden" value="{{ lead.last_name }}"
-                               name="last_name">
-                      <input type="hidden" value="{{ lead.first_name }}"
-                               name="first_name">
-                      <button class="btn btn-success text-xxs m-0 p-2"
-                                type="submit">Создать
-                        </button>
-                    </td>
-                  </form>
-                  </div>
+              <input type="hidden" value="{{ lead.id_user }}"
+                     name="id_vk">
 
 
-                {% endfor %}
+              <input type="hidden" value="{{ lead.pk }}"
+                     name="lead_pk">
+
+
+              <div class="col-2">
+                <button class="btn btn-light text-xxs m-0 p-2 "
+                        type="submit">Привязать
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+
+
+        <form action="{% url 'crm:crm_lead' %}" method="post" class="col-1">
+          {% csrf_token %}
+          <td class="align-middle text-center">
+            <input type="hidden" value="{{ lead.pk }}"
+                   name="lead">
+            <input type="hidden" value="{{ lead.id_user }}"
+                   name="id_vk">
+            <input type="hidden" value="{{ lead.last_name }}"
+                   name="last_name">
+            <input type="hidden" value="{{ lead.first_name }}"
+                   name="first_name">
+            <button class="btn btn-success text-xxs m-0 p-2"
+                    type="submit">Создать
+            </button>
+          </td>
+        </form>
+      </div>
+    {% endfor %}
   </div>
 {#                </tbody>#}
 {#              </table>#}

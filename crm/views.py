@@ -708,9 +708,8 @@ class LeadList(ListView):
     def post(self, request, *args, **kwargs):
         if request.method == 'POST':
             if 'lead_pk' in request.POST:
-                customer = request.POST('fio_choices')
-                # print(pk_cust)
-                # customer = Customer.objects.get(pk=pk_cust)
+                pk_cust = request.POST['fio_choices']
+                customer = Customer.objects.get(pk=pk_cust)
                 Lead.objects.filter(pk=request.POST['lead_pk']).update(
                     is_customer=True)
             else:
