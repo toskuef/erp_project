@@ -36,12 +36,18 @@ class Profile(models.Model):
     def __str__(self):
         return str(self.user)
 
+    class Meta:
+        managed = False
+
 
 class StatusStaff(models.Model):
     status_staff = models.CharField(verbose_name='должность', max_length=20)
 
     def __str__(self):
         return self.status_staff
+
+    class Meta:
+        managed = False
 
 
 class ModifiedArrayField(ArrayField):
@@ -53,6 +59,9 @@ class ModifiedArrayField(ArrayField):
             **kwargs
         }
         return super(ArrayField, self).formfield(**defaults)
+
+    class Meta:
+        managed = False
 
 
 class AnySettingsUser(models.Model):
