@@ -2,6 +2,8 @@ from datetime import datetime
 
 from django import template
 
+from users.models import AnySettingsUser
+
 register = template.Library()
 
 

@@ -1,12 +1,35 @@
-<p class="text-sm">
-  <span class="badge badge-sm badge-success">
-    {% if customer.is_show %}
-    Действующий
-    {% else %}
-    Неразобран
-    {% endif %}
-  </span>
-</p>
+
+     {% if customer.status_customer == 2 %}
+                          <span class="badge badge-sm bg-gradient-info">
+                          {% for k, v in status_customer %}
+                          {% if k == customer.status_customer %}{{ v }}{% endif %}
+                          {% endfor %}
+                          </span>
+                          {% elif customer.status == 4 %}
+                          <span class="badge badge-sm bg-gradient-success">
+                          {% for k, v in status_customer %}
+                          {% if k == customer.status_customer %}{{ v }}{% endif %}
+                          {% endfor %}
+                          </span>
+                          {% elif customer.status_customer == 1 %}
+                          <span class="badge badge-sm bg-gradient-danger">
+                          {% for k, v in status_customer %}
+                          {% if k == customer.status_customer %}{{ v }}{% endif %}
+                          {% endfor %}
+                          </span>
+                          {% elif customer.status_customer == 6 %}
+                          <span class="badge badge-sm bg-gradient-white">
+                          {% for k, v in status_customer %}
+                          {% if k == customer.status_customer %}{{ v }}{% endif %}
+                          {% endfor %}
+                          </span>
+                          {% else %}
+                          <span class="badge badge-sm bg-gradient-dark">
+                          {% for k, v in status_customer %}
+                          {% if k == customer.status_customer %}{{ v }}{% endif %}
+                          {% endfor %}
+                          </span>
+                        {% endif %}
 <hr class="horizontal dark my-2">
 <ul class="list-group">
   <li class="list-group-item border-0 ps-0 text-sm"><strong

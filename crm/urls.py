@@ -13,7 +13,7 @@ urlpatterns = [
          name='crm_customer_edit'),
     path('customer/<int:pk>/address/edit/', views.address_edit,
          name='crm_address_edit'),
-    path('customer-filter/', views.customer_list_filter, name='customer-filter'),
+    # path('customer-filter/', views.customer_list_filter, name='customer-filter'),
     path('order/<int:pk>/', views.OrderDetail.as_view(),
          name='crm_order_detail'),
     path('orders/product/<int:pk>/', views.ProductDetail.as_view(), name='crm_product_detail'),
@@ -25,6 +25,7 @@ urlpatterns = [
     path('lead/', views.LeadList.as_view(), name='crm_lead'),
     path('search/', views.Search.as_view(), name='search'),
     path('add-file/<int:pk>/<slug:object>/', views.add_file, name='add_file'),
+    path('customer-filter/', views.customer_list_filter, name='crm_all_customer'),
     path('', views.CustomerList.as_view(), name='crm_customers'),
 
 ]

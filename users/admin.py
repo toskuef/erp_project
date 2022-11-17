@@ -12,3 +12,9 @@ class ProfileAdmin(ImportExportModelAdmin):
 @admin.register(StatusStaff)
 class StatusStaffAdmin(ImportExportModelAdmin):
     pass
+
+
+@admin.register(AnySettingsUser)
+class AnySettingsUserAdmin(ImportExportModelAdmin):
+    pass
+

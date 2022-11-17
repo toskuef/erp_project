@@ -21,7 +21,10 @@ from vk_api.utils import get_random_id
 from core import settings
 from crm.models import Customer, Comment, Task, AddressCountry, AddressArea, \
     AddressRegion, AddressTown, AddressStreet, Address, Order, Product, \
-    SocialWebCustomers, SourceCustomer, Measuring, Project, Files, Lead
+    SocialWebCustomers, SourceCustomer, Measuring, Project, Files, Lead, \
+    StatusOrder
+from users.forms import UserSettingsStatusCustomerForm
+from users.models import AnySettingsUser
 from .forms import CustomerForm, CommentForm, TaskForm, OrderForm, AddressForm, \
     CountryForm, AreaForm, RegionForm, TownForm, StreetForm, ProductForm, \
     MeasuringForm, ProjectForm
@@ -68,20 +71,17 @@ class CustomerList(LoginRequired, ListView):
             except:
                 continue
 
-        customers = Customer.objects.annotate(
-            num_task=Sum(Case(When(tasks__is_done=False, then=1))),
-            last_update=(datetime.now() - Max('tasks__date'))).annotate(
-            status=Case(When(is_show=False, then=Value('Неразобран')),
-                        When(last_update=None, then=Value('Новый')),
-                        When(num_task__gt=0,
-                             then=Value('Есть активные задачи')),
-                        When(last_update__gt=timedelta(days=10),
-                             then=Value('Неактивный')),
-                        default=Value('Нет активных задач')))
+        customers = Customer.objects.filter(
+            status_customer__in=list(AnySettingsUser.objects.filter(
+                user=self.request.user).values(
+                'filter_customer_list'))[0]['filter_customer_list'])
+        only_active_order = AnySettingsUser.objects.filter(user=self.request.user, customers_with_active_order=True).exists()
         search_query = self.request.GET.get('search', '')
         for c in customers:
             if c.pk in unread:
                 c.unread = unread[c.pk]
+        if only_active_order:
+            return customers.filter(is_active_order=True)
         if search_query:
             return customers.filter(Q(last_name__iregex=search_query))
         return customers
@@ -103,39 +103,42 @@ class CustomerList(LoginRequired, ListView):
         context['unread'] = unread
         comments = Comment.objects.filter(is_show=False, to=self.request.user)
         tasks = Task.objects.filter(is_show=False, to=self.request.user)
-        context['notification'] = sorted(chain(comments, tasks), key=attrgetter('date'), reverse=True)[::-1]
+        context['notification'] = sorted(chain(comments, tasks), key=attrgetter(
+            'date'), reverse=True)[::-1]
+        context['status_customer'] = AnySettingsUser.STATUS_CUSTOMER
+        context[
+            'user_settings_status_customer_form'] = UserSettingsStatusCustomerForm(instance=AnySettingsUser.objects.get(user=self.request.user))
         return context
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST':
-            form = CustomerForm(request.POST)
-            if form.is_valid():
-                customer = form.save(commit=False)
-                customer.creater_customer = request.user
-                customer.save()
+            if 'first_name' in request.POST:
+                form = CustomerForm(request.POST)
+                if form.is_valid():
+                    customer = form.save(commit=False)
+                    customer.creater_customer = request.user
+                    customer.save()
+                    return redirect('crm:crm_customers')
+                return render(request, 'crm/crm_customers.html', {
+                    'object_list': Customer.objects.all(),
+                    'form': form,
+                    'show': 'show',
+                })
+            if 'filter_customer_list' in request.POST:
+                AnySettingsUser.objects.filter(user=request.user).update(
+                    filter_customer_list=request.POST.getlist('filter_customer_list'))
                 return redirect('crm:crm_customers')
-            return render(request, 'crm/crm_customers.html', {
-                'object_list': Customer.objects.all(),
-                'form': form,
-                'show': 'show',
-            })
 
 
 def customer_list_filter(request):
-    template_name = 'crm/includes/customer_list.html'
-    filter = request.GET.values()
-    object_list = Customer.objects.annotate(
-        num_task=Sum(Case(When(tasks__is_done=False, then=1))),
-        last_update=(datetime.now() - Max('tasks__date'))).annotate(
-        status=Case(When(is_show=False, then=Value('Неразобран')),
-                    When(last_update=None, then=Value('Новый')),
-                    When(last_update__gt=timedelta(days=10),
-                         then=Value('Неактивный')),
-                    When(num_task__gt=0,
-                         then=Value('Есть активные задачи')),
-                    default=Value('Нет активных задач'))).filter(
-        status__in=list(filter))
-    return render(request, template_name, {'object_list': object_list})
+    if AnySettingsUser.objects.filter(user=request.user,
+                                      customers_with_active_order=True).exists():
+        AnySettingsUser.objects.filter(user=request.user).update(
+            customers_with_active_order=False)
+    else:
+        AnySettingsUser.objects.filter(user=request.user).update(
+            customers_with_active_order=True)
+    return redirect('crm:crm_customers')
 
 
 class CustomerDetail(LoginRequired, DetailView):
@@ -143,7 +146,8 @@ class CustomerDetail(LoginRequired, DetailView):
     template_name = 'crm/crm_customer_detail.html'
 
     def get(self, request, *args, **kwargs):
-        Customer.objects.filter(pk=self.kwargs['pk']).update(is_show=True)
+        Customer.objects.filter(pk=self.kwargs['pk'], is_show=False).update(is_show=True,
+                                                             status_customer=2)
         self.object = self.get_object()
         context = self.get_context_data(object=self.object)
         Comment.objects.filter(is_show=False, to=self.request.user,
@@ -173,6 +177,7 @@ class CustomerDetail(LoginRequired, DetailView):
         context['notification'] = sorted(chain(comments, tasks),
                                          key=attrgetter('date'), reverse=True)[
                                   ::-1]
+        context['status_customer'] = AnySettingsUser.STATUS_CUSTOMER
         context.update(get_context_comm_window(Customer, customer_id))
         return context
 
@@ -182,8 +187,10 @@ class CustomerDetail(LoginRequired, DetailView):
             if 'title' in request.POST:
                 form = OrderForm(request.POST)
                 customer = self.kwargs.get('pk')
-                form_add_customer = form.save(commit=False)
-                form_add_customer.customer = Customer.objects.get(pk=customer)
+                form_add_order = form.save(commit=False)
+                form_add_order.customer = Customer.objects.get(pk=customer)
+                form_add_order.status_order = StatusOrder.objects.get(start_status=True)
+                Customer.objects.filter(pk=customer).update(is_active_order=True)
                 form.save()
                 return redirect('crm:crm_customer_detail', pk=customer)
             if 'last_name' in request.POST:

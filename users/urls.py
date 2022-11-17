@@ -5,7 +5,7 @@ from django.contrib.auth.views import (
     PasswordChangeView)
 
 from . import views
-
+from .views import LoginUserCustom
 
 app_name = 'users'
 
@@ -20,7 +20,7 @@ urlpatterns = [
     #      views.SignUp.as_view(),
     #      name='signup'),
     path('login/',
-         LoginView.as_view(
+         LoginUserCustom.as_view(
              template_name='users/login.html'),
          name='login'),
     # path('password_change/',

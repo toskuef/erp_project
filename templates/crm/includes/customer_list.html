@@ -110,25 +110,35 @@
 {#                      <p class="text-xs text-secondary mb-0">Organization</p>#}
                     </td>
                     <td class="align-middle text-center text-sm">
-                        {% if customer.status == 'Новый' %}
+                        {% if customer.status_customer == 2 %}
                           <span class="badge badge-sm bg-gradient-info">
-                          {{ customer.status }}
+                          {% for k, v in status_customer %}
+                          {% if k == customer.status_customer %}{{ v }}{% endif %}
+                          {% endfor %}
                           </span>
-                          {% elif customer.status == 'Есть активные задачи' %}
+                          {% elif customer.status == 4 %}
                           <span class="badge badge-sm bg-gradient-success">
-                          {{ customer.status }}
+                          {% for k, v in status_customer %}
+                          {% if k == customer.status_customer %}{{ v }}{% endif %}
+                          {% endfor %}
                           </span>
-                          {% elif customer.status == 'Неразобран' %}
+                          {% elif customer.status_customer == 1 %}
                           <span class="badge badge-sm bg-gradient-danger">
-                          {{ customer.status }}
+                          {% for k, v in status_customer %}
+                          {% if k == customer.status_customer %}{{ v }}{% endif %}
+                          {% endfor %}
                           </span>
-                          {% elif customer.status == 'Неактивный' %}
+                          {% elif customer.status_customer == 6 %}
                           <span class="badge badge-sm bg-gradient-white">
-                          {{ customer.status }}
+                          {% for k, v in status_customer %}
+                          {% if k == customer.status_customer %}{{ v }}{% endif %}
+                          {% endfor %}
                           </span>
                           {% else %}
                           <span class="badge badge-sm bg-gradient-dark">
-                          {{ customer.status }}
+                          {% for k, v in status_customer %}
+                          {% if k == customer.status_customer %}{{ v }}{% endif %}
+                          {% endfor %}
                           </span>
                         {% endif %}
                     </td>

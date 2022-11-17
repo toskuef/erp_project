@@ -1,11 +1,15 @@
 import datetime
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 
+from users.models import AnySettingsUser
+
 User = get_user_model()
+STATUS_CUSTOMER = AnySettingsUser.STATUS_CUSTOMER
 
 
 def get_first_name(self):
@@ -42,6 +46,9 @@ class Customer(models.Model):
     comments = GenericRelation('Comment')
     tasks = GenericRelation('Task')
     is_show = models.BooleanField(default=False)
+    status_customer = models.IntegerField(choices=STATUS_CUSTOMER,
+                                          default=1)
+    is_active_order = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'клиент'
@@ -251,6 +258,19 @@ class TypePay(models.Model):
 
 class StatusOrder(models.Model):
     name = models.CharField(max_length=100, verbose_name='наименование')
+    start_status = models.BooleanField(verbose_name='начальный статус', default=False)
+    finish_status = models.BooleanField(verbose_name='финальный статус', default=False)
+
+    def clean(self):
+        if self.start_status:
+            start_status = StatusOrder.objects.filter(start_status=True)
+            finish_status = StatusOrder.objects.filter(finish_status=True)
+            if start_status.exists():
+                raise ValidationError(
+                    "Может быть только один начальный статус")
+            if finish_status.exists():
+                raise ValidationError(
+                    "Может быть только один финальный статус")
 
     def __str__(self):
         return self.name
