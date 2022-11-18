@@ -231,18 +231,26 @@ class CustomerDetail(LoginRequired, DetailView):
                 comment.staff = request.user
                 comment.save()
                 context = get_context_comm_window(Customer, self.kwargs['pk'])
-                return render(request, template, context)
+                return redirect('crm:crm_customer_detail',
+                                pk=self.kwargs['pk'])
             if 'task' in request.POST:
                 form = TaskForm(request.POST)
                 task = form.save(commit=False)
                 task.content_object = customer
                 task.staff = request.user
                 task.save()
+                Customer.objects.filter(pk=self.kwargs['pk']).update(status_customer=4)
                 context = get_context_comm_window(Customer, self.kwargs['pk'])
-                return render(request, template, context)
+                return redirect('crm:crm_customer_detail',
+                                pk=self.kwargs['pk'])
             if 'done_task' in request.POST:
                 task_id = request.POST['done_task']
                 Task.objects.filter(pk=task_id).update(is_done=True)
+                tasks_active = Customer.objects.get(
+                    pk=self.kwargs['pk']).tasks.filter(
+                    is_done=False).exists()
+                Customer.objects.filter(pk=self.kwargs['pk']).update(
+                        status_customer=3)
                 return redirect('crm:crm_customer_detail',
                                 pk=self.kwargs['pk'])
             if 'vk' in request.POST:
@@ -256,7 +264,8 @@ class CustomerDetail(LoginRequired, DetailView):
                     message=answer
                 )
                 context = get_context_comm_window(Customer, self.kwargs['pk'])
-                return render(request, template, context)
+                return redirect('crm:crm_customer_detail',
+                                pk=self.kwargs['pk'])
 
     def render_new_message(self):
         request = self.request
@@ -469,6 +478,12 @@ def done_task(request, cust_pk, pk, object):
         context = get_context_comm_window(Customer, cust_pk)
     else:
         context = get_context_comm_window(Order, cust_pk)
+    tasks_active = Customer.objects.get(
+        pk=cust_pk).tasks.filter(
+        is_done=False).exists()
+    if not tasks_active:
+        Customer.objects.filter(pk=cust_pk).update(
+            status_customer=3)
     return render(request, template, context)
 
 
@@ -733,3 +748,18 @@ class LeadList(LoginRequired, ListView):
                                                   pk=1),
                                               id_user=request.POST['id_vk'])
             return redirect('crm:crm_lead')
+
+
+def close_customer(request, pk):
+    customer = Customer.objects.filter(pk=pk, status_customer__in=[2,
+                                                                   3]).exists()
+    customer_close = Customer.objects.filter(pk=pk, status_customer__in=[6]).exists()
+    if customer:
+        Customer.objects.filter(pk=pk).update(status_customer=6)
+        Comment.objects.create(content_object=Customer.objects.get(pk=pk),
+                               text=f'Клиент помечен как неактивный пользователем {request.user}. (автоматическое сообщение)')
+    if customer_close:
+        Customer.objects.filter(pk=pk).update(status_customer=2)
+        Comment.objects.create(content_object=Customer.objects.get(pk=pk),
+                               text=f'Клиент восстановлен пользователем {request.user}. (автоматическое сообщение)')
+    return redirect('crm:crm_customer_detail', pk=pk)

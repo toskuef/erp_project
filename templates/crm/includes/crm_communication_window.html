@@ -103,7 +103,7 @@
                   </p>
                   <div class="d-flex align-items-center justify-content-end text-sm opacity-6">
                     <i class="ni ni-check-bold text-sm me-1"></i>
-                    <small>{{ content.staff }}</small>
+                    <small>{{ content.staff }} {{ content.date }}</small>
                   </div>
                 </div>
               </div>
@@ -120,7 +120,7 @@
                   </p>
                   <div class="d-flex align-items-center text-sm opacity-6">
                     <i class="ni ni-check-bold text-sm text-white me-1"></i>
-                    <small class="text-white">{{ content.staff }}</small>
+                    <small class="text-white">{{ content.staff }} {{ content.date }}</small>
                   </div>
                 </div>
               </div>
@@ -145,14 +145,18 @@
     {% endif %}
   {% endfor %}
 {% endfor %}
-
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity=
+                "sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous">
+</script>
 <script>
     var objDiv = document.getElementById("parentDiv");
     objDiv.scrollTop = objDiv.scrollHeight;
     $("#submit-comm").click(function () {
         setTimeout(() => {
             document.getElementById("form-comm").reset();
-        }, 100);
+        }, 10);
     })
 </script>
 

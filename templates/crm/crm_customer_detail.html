@@ -44,32 +44,46 @@
           z-index: 100;
       }
   </style>
-
   <div class="container-fluid py-4">
     <div class="row tab-content" id="pills-tabContent">
       <div class="col-12 col-md-4 mb-md-0 mb-1">
         <div class="card h-100">
           <div class="card-header pb-0 p-3">
             <div class="row">
-              <div class="col-md-8 d-flex align-items-center">
+              <div class="col-md-7 d-flex align-items-center">
                 <h6 class="mb-0">{{ customer }}</h6>
               </div>
-              <div class="col-md-4 text-end">
+              <div class="col-md-5 text-end">
+                {% if customer.status_customer == 2 or customer.status_customer == 3 %}
                 <a type="button"
                    hx-get="{% url 'crm:crm_customer_edit' customer.pk %}"
                    hx-target="#r">
-                  <i class="fas fa-user-edit text-secondary text-sm mx-3"
+                  <i class="fas fa-user-edit text-secondary text-sm"
                      data-bs-toggle="tooltip" data-bs-placement="top"
                      title="Изменить профиль"></i>
                 </a>
                 <a type="button"
                    hx-get="{% url 'crm:crm_address_edit' customer.pk %}"
                    hx-target="#r">
-                  <i class="fas fa-address-card text-secondary text-sm"
+                  <i class="fas fa-address-card text-secondary text-sm mx-3"
                      data-bs-toggle="tooltip" data-bs-placement="top"
                      title="Изменить адрес"></i>
                 </a>
-
+                <a type="button"
+                   href="{% url 'crm:crm_close_customer' customer.pk %}">
+                  <i class="fas fa-times text-secondary text-sm"
+                     data-bs-toggle="tooltip" data-bs-placement="top"
+                     title="Пометить как неактивный"></i>
+                </a>
+                {% endif %}
+              {% if customer.status_customer == 6 %}
+              <a type="button"
+                   href="{% url 'crm:crm_close_customer' customer.pk %}">
+                  <i class="fas fa-unlock text-secondary text-sm"
+                     data-bs-toggle="tooltip" data-bs-placement="top"
+                     title="Вернуть активность"></i>
+                </a>
+              {% endif %}
               </div>
             </div>
           </div>
@@ -119,11 +133,11 @@
               </div>
               <button id="submit-comm" type="submit"
                       class="col-2 btn bg-gradient-light mb-0 ms-2"
-                      hx-post="{{ request.get_full_path }}"
-                      hx-target="#parentDiv">
+{#                      hx-post="{{ request.get_full_path }}"#}
+                      hx-target="#parentDiv"
+                      >
                 <i class="ni ni-send"></i>
               </button>
-
             </form>
           </div>
         </div>

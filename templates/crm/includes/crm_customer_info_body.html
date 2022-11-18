@@ -1,35 +1,46 @@
-
-     {% if customer.status_customer == 2 %}
-                          <span class="badge badge-sm bg-gradient-info">
+{% if customer.status_customer == 2 %}
+  <span class="badge badge-sm bg-gradient-info">
                           {% for k, v in status_customer %}
-                          {% if k == customer.status_customer %}{{ v }}{% endif %}
+                            {% if k == customer.status_customer %}
+                              {{ v }}{% endif %}
                           {% endfor %}
                           </span>
-                          {% elif customer.status == 4 %}
-                          <span class="badge badge-sm bg-gradient-success">
+{% elif customer.status_customer == 3 %}
+  <span class="badge badge-sm bg-gradient-warning">
                           {% for k, v in status_customer %}
-                          {% if k == customer.status_customer %}{{ v }}{% endif %}
+                            {% if k == customer.status_customer %}
+                              {{ v }}{% endif %}
                           {% endfor %}
                           </span>
-                          {% elif customer.status_customer == 1 %}
-                          <span class="badge badge-sm bg-gradient-danger">
+{% elif customer.status_customer == 4 %}
+  <span class="badge badge-sm bg-gradient-success">
                           {% for k, v in status_customer %}
-                          {% if k == customer.status_customer %}{{ v }}{% endif %}
+                            {% if k == customer.status_customer %}
+                              {{ v }}{% endif %}
                           {% endfor %}
                           </span>
-                          {% elif customer.status_customer == 6 %}
-                          <span class="badge badge-sm bg-gradient-white">
+{% elif customer.status_customer == 1 %}
+  <span class="badge badge-sm bg-gradient-danger">
                           {% for k, v in status_customer %}
-                          {% if k == customer.status_customer %}{{ v }}{% endif %}
+                            {% if k == customer.status_customer %}
+                              {{ v }}{% endif %}
                           {% endfor %}
                           </span>
-                          {% else %}
-                          <span class="badge badge-sm bg-gradient-dark">
+{% elif customer.status_customer == 6 %}
+  <span class="badge badge-sm bg-gradient-primary">
                           {% for k, v in status_customer %}
-                          {% if k == customer.status_customer %}{{ v }}{% endif %}
+                            {% if k == customer.status_customer %}
+                              {{ v }}{% endif %}
                           {% endfor %}
                           </span>
-                        {% endif %}
+{% else %}
+  <span class="badge badge-sm bg-gradient-dark">
+                          {% for k, v in status_customer %}
+                            {% if k == customer.status_customer %}
+                              {{ v }}{% endif %}
+                          {% endfor %}
+                          </span>
+{% endif %}
 <hr class="horizontal dark my-2">
 <ul class="list-group">
   <li class="list-group-item border-0 ps-0 text-sm"><strong
@@ -48,30 +59,30 @@
        href="https://vk.com/id{{ vk_id.id_user }}" target="_blank">
       <i class="fab fa-vk fa-lg"></i>
     </a>
-    {% endif %}
+  {% endif %}
   </li>
   <br>
-<h6 class="mb-0">Адрес:</h6>
+  <h6 class="mb-0">Адрес:</h6>
 
-{% for address in address_list %}
-  <li class="list-group-item border-0 ps-0 text-sm">
-    {{ address.area }} обл.,
-    {{ address.region }} р-н,
-    г. {{ address.town }},
-    ул. {{ address.street }}, д. {{ address.num_house }},
-    {% if address.num_housing %}
-      корп. {{ address.num_housing }},
-    {% endif %}
-    {% if address.num_level %}
-      под. {{ address.num_level }},
-    {% endif %}
-    {% if address.num_door %}
-      эт. {{ address.num_door }},
-    {% endif %}
-    {% if address.num_flat %}
-      кв. {{ address.num_flat }},
-    {% endif %}
-  </li>
+  {% for address in address_list %}
+    <li class="list-group-item border-0 ps-0 text-sm">
+      {{ address.area }} обл.,
+      {{ address.region }} р-н,
+      г. {{ address.town }},
+      ул. {{ address.street }}, д. {{ address.num_house }},
+      {% if address.num_housing %}
+        корп. {{ address.num_housing }},
+      {% endif %}
+      {% if address.num_level %}
+        под. {{ address.num_level }},
+      {% endif %}
+      {% if address.num_door %}
+        эт. {{ address.num_door }},
+      {% endif %}
+      {% if address.num_flat %}
+        кв. {{ address.num_flat }},
+      {% endif %}
+    </li>
 
-{% endfor %}
+  {% endfor %}
 </ul>

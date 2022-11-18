@@ -1,9 +1,9 @@
 {% load widget_tweaks %}
 <div class="w-100 mx-1 row flex-row" id="form-res">
-  {% render_field new_task.type_task class="form-control ps-2 col form-control-sm mx-1 border-end " %}
-  {% render_field new_task.task class="form-control border-start border-end ps-2 col form-control-sm mx-1 " placeholder="Описание" %}
-  {% render_field new_task.to class="form-control border-start border-end ps-2 col form-control-sm mx-1 " %}
-  {% render_field new_task.deadline class="form-control datepicker border-start ps-2 col form-control-sm mx-1 " placeholder="Срок" type="text" onfocus="focused(this)" onfocusout="defocused(this)" %}
+  {% render_field new_task.type_task id="task1" class="form-control ps-2 col form-control-sm mx-1 border-end " %}
+  {% render_field new_task.task id="task2" class="form-control border-start border-end ps-2 col form-control-sm mx-1 " placeholder="Описание" %}
+  {% render_field new_task.to id="task3" class="form-control border-start border-end ps-2 col form-control-sm mx-1 " %}
+  {% render_field new_task.deadline id="task4" class="form-control datepicker border-start ps-2 col form-control-sm mx-1 " placeholder="Срок" type="text" onfocus="focused(this)" onfocusout="defocused(this)" %}
 </div>
 <script src="/assets/js/plugins/flatpickr.min.js"></script>
 <script>
