@@ -146,7 +146,7 @@ class CustomerDetail(LoginRequired, DetailView):
     template_name = 'crm/crm_customer_detail.html'
 
     def get(self, request, *args, **kwargs):
-        Customer.objects.filter(pk=self.kwargs['pk'], is_show=False).update(is_show=True,
+        Customer.objects.filter(pk=self.kwargs['pk'], status_customer=1).update(is_show=True,
                                                              status_customer=2)
         self.object = self.get_object()
         context = self.get_context_data(object=self.object)
